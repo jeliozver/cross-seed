@@ -12,7 +12,7 @@ import {
 	InjectionResult,
 	SaveResult,
 } from "../constants.js";
-import { checkJobs, getJobLastRun, getJobs, JobName } from "../jobs.js";
+import { checkJobs, getJobs, JobName } from "../jobs.js";
 import { Label, logger } from "../logger.js";
 import {
 	Candidate,
@@ -21,7 +21,7 @@ import {
 } from "../pipeline.js";
 import { getRuntimeConfig, RuntimeConfig } from "../runtimeConfig.js";
 import { indexTorrentsAndDataDirs } from "../torrent.js";
-import { formatAsList, humanReadableDate, sanitizeInfoHash } from "../utils.js";
+import { formatAsList, sanitizeInfoHash } from "../utils.js";
 import { authorize } from "../utils/authUtils.js";
 
 const ANNOUNCE_SCHEMA = z
@@ -385,13 +385,6 @@ export async function baseApiPlugin(app: FastifyInstance) {
 
 		if (job.isActive) {
 			const message = `${job.name}: already running`;
-			logger.error({ label: Label.SCHEDULER, message });
-			return reply.code(409).send(message);
-		}
-
-		const lastRun = (await getJobLastRun(job.name)) ?? 0;
-		if (Date.now() < lastRun) {
-			const message = `${job.name}: not eligible to run ahead of schedule, next scheduled run is at ${humanReadableDate(lastRun + job.cadence)} (triggering an early run is allowed after ${humanReadableDate(lastRun)})`;
 			logger.error({ label: Label.SCHEDULER, message });
 			return reply.code(409).send(message);
 		}

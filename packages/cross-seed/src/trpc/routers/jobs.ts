@@ -1,9 +1,8 @@
 import { z } from "zod";
 import ms from "ms";
 import { router, authedProcedure } from "../index.js";
-import { getJobs, getJobLastRun, JobName, checkJobs } from "../../jobs.js";
+import { getJobs, JobName, checkJobs } from "../../jobs.js";
 import { Label, logger } from "../../logger.js";
-import { humanReadableDate } from "../../utils.js";
 import { db } from "../../db.js";
 
 type JobStatus = {
@@ -51,11 +50,7 @@ export const jobsRouter = router({
 					? "now"
 					: new Date(eligibilityTs).toISOString();
 
-			// Check if job can run now (not active and eligible for early run)
-			// Jobs can run "ahead of schedule" if current time >= lastRun time
-			// Note: lastRun can be in the future when delayNextRun was used
-			const canRunNow =
-				!job.isActive && (lastRun === undefined || now >= lastRun);
+			const canRunNow = !job.isActive;
 
 			return {
 				name: job.name,
@@ -90,13 +85,6 @@ export const jobsRouter = router({
 
 			if (job.isActive) {
 				throw new Error(`${job.name}: already running`);
-			}
-
-			const lastRun = (await getJobLastRun(job.name)) ?? 0;
-			if (Date.now() < lastRun) {
-				throw new Error(
-					`${job.name}: not eligible to run ahead of schedule, next scheduled run is at ${humanReadableDate(lastRun + job.cadence)} (triggering an early run is allowed after ${humanReadableDate(lastRun)})`,
-				);
 			}
 
 			job.runAheadOfSchedule = true;
