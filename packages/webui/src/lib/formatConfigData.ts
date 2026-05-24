@@ -4,23 +4,12 @@ import {
   WebhookObjectSchema,
 } from '../../../shared/configSchema';
 
-let webhookIdCounter = 0;
-
-/**
- * Generates a stable, unique id for a webhook form row. Used as the React key
- * and as the key for per-row UI state so it survives add/remove reordering.
- * A counter is used rather than `crypto.randomUUID()` because the WebUI may be
- * served from a non-secure context (LAN IP over HTTP) where it is unavailable.
- */
-export function nextWebhookId(): string {
-  webhookIdCounter += 1;
-  return `webhook-${webhookIdCounter}`;
-}
-
 /**
  * Transforms API config data for the WebUI form. Webhook entries are normalized
- * to the form's `{ id, url, payload, headers }` shape, with payload/headers
- * serialized back to JSON text for editing in the textareas.
+ * to the form's `{ url, payload, headers, advancedOpen }` shape, with
+ * payload/headers serialized back to JSON text for editing in the textareas.
+ * `advancedOpen` is seeded from whether the saved entry has any custom
+ * headers/payload, so saved-with-data webhooks render expanded.
  */
 export function formatConfigDataForForm(config: RuntimeConfig) {
   return {
@@ -29,26 +18,28 @@ export function formatConfigDataForForm(config: RuntimeConfig) {
       notificationWebhookUrls: config.notificationWebhookUrls.map(
         (e: WebhookEntry) => {
           if (typeof e === 'string') {
-            return { id: nextWebhookId(), url: e, payload: '', headers: '' };
+            return { url: e, payload: '', headers: '', advancedOpen: false };
           }
           const parsed = WebhookObjectSchema.safeParse(e);
           if (parsed.success) {
+            const payload = parsed.data.payload
+              ? JSON.stringify(parsed.data.payload)
+              : '';
+            const headers = parsed.data.headers
+              ? JSON.stringify(parsed.data.headers)
+              : '';
             return {
-              id: nextWebhookId(),
               url: parsed.data.url,
-              payload: parsed.data.payload
-                ? JSON.stringify(parsed.data.payload)
-                : '',
-              headers: parsed.data.headers
-                ? JSON.stringify(parsed.data.headers)
-                : '',
+              payload,
+              headers,
+              advancedOpen: Boolean(payload) || Boolean(headers),
             };
           }
           return {
-            id: nextWebhookId(),
             url: '',
             payload: '',
             headers: '',
+            advancedOpen: false,
           };
         },
       ),

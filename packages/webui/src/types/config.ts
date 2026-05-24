@@ -104,10 +104,10 @@ export const connectValidationSchema = z.object({
   sonarr: z.array(z.string().url().or(z.literal(''))).transform((v) => v ?? []),
   notificationWebhookUrls: z.array(
     z.object({
-      id: z.string(),
       url: z.string().url().or(z.literal('')),
       payload: optionalJsonObjectString,
       headers: optionalJsonHeadersString,
+      advancedOpen: z.boolean(),
     }),
   ),
 });

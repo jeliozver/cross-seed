@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Loader2, TestTube } from 'lucide-react';
 import { FieldInfo } from '@/components/Form/FieldInfo';
@@ -15,7 +15,7 @@ import { defaultConnectFormValues } from '@/components/Form/shared-form';
 import { useAppForm } from '@/hooks/form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/lib/trpc';
-import { formatConfigDataForForm, nextWebhookId } from '@/lib/formatConfigData';
+import { formatConfigDataForForm } from '@/lib/formatConfigData';
 import { connectValidationSchema } from '@/types/config';
 import { FormValidationProvider } from '@/contexts/Form/form-validation-provider';
 import { pickSchemaFields } from '@/lib/pick-schema-fields';
@@ -26,10 +26,10 @@ import { RuntimeConfig, WebhookEntry } from '../../../../shared/configSchema';
 type ConnectFormData = z.infer<typeof connectValidationSchema>;
 
 type WebhookFormEntry = {
-  id: string;
   url: string;
   payload: string;
   headers: string;
+  advancedOpen: boolean;
 };
 
 function transformWebhooksForApi(entries: WebhookFormEntry[]): WebhookEntry[] {
@@ -62,22 +62,20 @@ function ConnectSettings() {
   const { isFieldRequired } = useConfigForm(connectValidationSchema);
 
   const trpc = useTRPC();
+  const selectConfig = useCallback(
+    (data: {
+      config: RuntimeConfig;
+      apiKey: string;
+    }): Partial<ConnectFormData> => {
+      const fullDataset = formatConfigDataForForm(data.config);
+      return pickSchemaFields(connectValidationSchema, fullDataset, {
+        includeUndefined: true,
+      });
+    },
+    [],
+  );
   const { data: configData } = useQuery(
-    trpc.settings.get.queryOptions(undefined, {
-      select: (data: {
-        config: RuntimeConfig;
-        apiKey: string;
-      }): Partial<ConnectFormData> => {
-        const fullDataset = formatConfigDataForForm(data.config);
-        const filteredData = pickSchemaFields(
-          connectValidationSchema,
-          fullDataset,
-          { includeUndefined: true },
-        );
-
-        return filteredData;
-      },
-    }),
+    trpc.settings.get.queryOptions(undefined, { select: selectConfig }),
   );
 
   const baseHandleSubmit = useSettingsFormSubmit();
@@ -129,20 +127,6 @@ function ConnectSettings() {
     }),
   );
 
-  const [advancedOpen, setAdvancedOpen] = useState<Set<string>>(new Set());
-  // Seed the expanded-advanced state once, from webhooks that load with
-  // custom headers/payload, so they render expanded without coupling the
-  // toggle's open/closed state to whether data is present.
-  const seededAdvancedRef = useRef(false);
-  useEffect(() => {
-    if (seededAdvancedRef.current || !configData) return;
-    seededAdvancedRef.current = true;
-    const entries = (configData.notificationWebhookUrls ??
-      []) as WebhookFormEntry[];
-    setAdvancedOpen(
-      new Set(entries.filter((e) => e.headers || e.payload).map((e) => e.id)),
-    );
-  }, [configData]);
   const [lastFieldAdded, setLastFieldAdded] = useState<string | null>(null);
   useEffect(() => {
     if (lastFieldAdded) {
@@ -353,9 +337,9 @@ function ConnectSettings() {
                             )}
                           </Label>
                           {field.state.value?.map(
-                            (entry: WebhookFormEntry, index: number) => (
+                            (_: WebhookFormEntry, index: number) => (
                               <fieldset
-                                key={entry.id}
+                                key={index}
                                 className="border-border space-y-2 rounded-md border p-3"
                               >
                                 <div className="flex items-center gap-2">
@@ -400,21 +384,19 @@ function ConnectSettings() {
                                   )}
                                 </form.Subscribe>
                                 <div className="mt-1 flex items-center gap-2">
-                                  <Switch
-                                    id={`notificationWebhookUrls-${index}-advanced`}
-                                    checked={advancedOpen.has(entry.id)}
-                                    onCheckedChange={(checked) => {
-                                      setAdvancedOpen((prev) => {
-                                        const next = new Set(prev);
-                                        if (checked) {
-                                          next.add(entry.id);
-                                        } else {
-                                          next.delete(entry.id);
+                                  <form.Field
+                                    name={`notificationWebhookUrls[${index}].advancedOpen`}
+                                  >
+                                    {(subfield) => (
+                                      <Switch
+                                        id={`notificationWebhookUrls-${index}-advanced`}
+                                        checked={subfield.state.value}
+                                        onCheckedChange={(checked) =>
+                                          subfield.handleChange(checked)
                                         }
-                                        return next;
-                                      });
-                                    }}
-                                  />
+                                      />
+                                    )}
+                                  </form.Field>
                                   <Label
                                     htmlFor={`notificationWebhookUrls-${index}-advanced`}
                                     className="text-muted-foreground text-xs"
@@ -422,80 +404,95 @@ function ConnectSettings() {
                                     Custom headers & payload
                                   </Label>
                                 </div>
-                                {advancedOpen.has(entry.id) && (
-                                  <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                                    <div>
-                                      <Label className="text-muted-foreground text-xs">
-                                        Headers (JSON)
-                                      </Label>
-                                      <form.Field
-                                        name={`notificationWebhookUrls[${index}].headers`}
-                                      >
-                                        {(subfield) => (
-                                          <Textarea
-                                            name={subfield.name}
-                                            value={subfield.state.value}
-                                            onChange={(e) =>
-                                              subfield.handleChange(
-                                                e.target.value,
-                                              )
+                                <form.Subscribe
+                                  selector={(s) =>
+                                    (
+                                      s.values
+                                        .notificationWebhookUrls as WebhookFormEntry[]
+                                    )?.[index]?.advancedOpen
+                                  }
+                                >
+                                  {(isOpen) =>
+                                    isOpen ? (
+                                      <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                        <div>
+                                          <Label className="text-muted-foreground text-xs">
+                                            Headers (JSON)
+                                          </Label>
+                                          <form.Field
+                                            name={`notificationWebhookUrls[${index}].headers`}
+                                          >
+                                            {(subfield) => (
+                                              <Textarea
+                                                name={subfield.name}
+                                                value={subfield.state.value}
+                                                onChange={(e) =>
+                                                  subfield.handleChange(
+                                                    e.target.value,
+                                                  )
+                                                }
+                                                onBlur={subfield.handleBlur}
+                                                placeholder='{"Authorization": "Bearer token"}'
+                                                rows={2}
+                                                className="resize-y font-mono text-xs"
+                                              />
+                                            )}
+                                          </form.Field>
+                                          <form.Subscribe
+                                            selector={(f) =>
+                                              f.fieldMeta[
+                                                `notificationWebhookUrls[${index}].headers` as keyof typeof f.fieldMeta
+                                              ]
                                             }
-                                            onBlur={subfield.handleBlur}
-                                            placeholder='{"Authorization": "Bearer token"}'
-                                            rows={2}
-                                            className="resize-y font-mono text-xs"
-                                          />
-                                        )}
-                                      </form.Field>
-                                      <form.Subscribe
-                                        selector={(f) =>
-                                          f.fieldMeta[
-                                            `notificationWebhookUrls[${index}].headers` as keyof typeof f.fieldMeta
-                                          ]
-                                        }
-                                      >
-                                        {(fieldMeta) => (
-                                          <FieldInfo fieldMeta={fieldMeta} />
-                                        )}
-                                      </form.Subscribe>
-                                    </div>
-                                    <div>
-                                      <Label className="text-muted-foreground text-xs">
-                                        Payload (JSON)
-                                      </Label>
-                                      <form.Field
-                                        name={`notificationWebhookUrls[${index}].payload`}
-                                      >
-                                        {(subfield) => (
-                                          <Textarea
-                                            name={subfield.name}
-                                            value={subfield.state.value}
-                                            onChange={(e) =>
-                                              subfield.handleChange(
-                                                e.target.value,
-                                              )
+                                          >
+                                            {(fieldMeta) => (
+                                              <FieldInfo
+                                                fieldMeta={fieldMeta}
+                                              />
+                                            )}
+                                          </form.Subscribe>
+                                        </div>
+                                        <div>
+                                          <Label className="text-muted-foreground text-xs">
+                                            Payload (JSON)
+                                          </Label>
+                                          <form.Field
+                                            name={`notificationWebhookUrls[${index}].payload`}
+                                          >
+                                            {(subfield) => (
+                                              <Textarea
+                                                name={subfield.name}
+                                                value={subfield.state.value}
+                                                onChange={(e) =>
+                                                  subfield.handleChange(
+                                                    e.target.value,
+                                                  )
+                                                }
+                                                onBlur={subfield.handleBlur}
+                                                placeholder='{"topic": "cross-seed", "priority": 3, "tags": ["seedbox"]}'
+                                                rows={2}
+                                                className="resize-y font-mono text-xs"
+                                              />
+                                            )}
+                                          </form.Field>
+                                          <form.Subscribe
+                                            selector={(f) =>
+                                              f.fieldMeta[
+                                                `notificationWebhookUrls[${index}].payload` as keyof typeof f.fieldMeta
+                                              ]
                                             }
-                                            onBlur={subfield.handleBlur}
-                                            placeholder='{"topic": "cross-seed", "priority": 3, "tags": ["seedbox"]}'
-                                            rows={2}
-                                            className="resize-y font-mono text-xs"
-                                          />
-                                        )}
-                                      </form.Field>
-                                      <form.Subscribe
-                                        selector={(f) =>
-                                          f.fieldMeta[
-                                            `notificationWebhookUrls[${index}].payload` as keyof typeof f.fieldMeta
-                                          ]
-                                        }
-                                      >
-                                        {(fieldMeta) => (
-                                          <FieldInfo fieldMeta={fieldMeta} />
-                                        )}
-                                      </form.Subscribe>
-                                    </div>
-                                  </div>
-                                )}
+                                          >
+                                            {(fieldMeta) => (
+                                              <FieldInfo
+                                                fieldMeta={fieldMeta}
+                                              />
+                                            )}
+                                          </form.Subscribe>
+                                        </div>
+                                      </div>
+                                    ) : null
+                                  }
+                                </form.Subscribe>
                               </fieldset>
                             ),
                           )}
@@ -505,10 +502,10 @@ function ConnectSettings() {
                               type="button"
                               onClick={() => {
                                 field.pushValue({
-                                  id: nextWebhookId(),
                                   url: '',
                                   payload: '',
                                   headers: '',
+                                  advancedOpen: false,
                                 });
                                 setLastFieldAdded(
                                   `notificationWebhookUrls-${field.state.value?.length ?? 0}-url`,
