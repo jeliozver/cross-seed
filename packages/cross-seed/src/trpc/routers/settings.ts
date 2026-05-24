@@ -1,7 +1,7 @@
 import { authedProcedure, router } from "../index.js";
 import { Label, logger } from "../../logger.js";
-import { setRuntimeConfig } from "../../runtimeConfig.js";
-import { getApiKey } from "../../auth.js";
+import { getRuntimeConfig, setRuntimeConfig } from "../../runtimeConfig.js";
+import { apiKeySchema, getApiKey, resetApiKey, setApiKey } from "../../auth.js";
 import { z } from "zod";
 import { getDbConfig, setDbConfig, updateDbConfig } from "../../dbConfig.js";
 import { getDefaultRuntimeConfig } from "../../configuration.js";
@@ -19,10 +19,10 @@ export const settingsRouter = router({
 				...getDefaultRuntimeConfig(),
 				...runtimeOverrides,
 			};
-			const apikey = await getApiKey();
+			const apiKey = await getApiKey();
 			return {
 				config: runtimeConfig,
-				apikey,
+				apiKey,
 			};
 		} catch (error) {
 			logger.error({ label: Label.SERVER, message: error.message });
@@ -59,6 +59,30 @@ export const settingsRouter = router({
 				throw new Error(`Failed to save config: ${error.message}`);
 			}
 		}),
+
+	setApiKey: authedProcedure
+		.input(z.object({ apiKey: apiKeySchema }))
+		.mutation(async ({ input }) => {
+			try {
+				const apiKey = await setApiKey(input.apiKey);
+				setRuntimeConfig({ ...getRuntimeConfig(), apiKey });
+				return { apiKey };
+			} catch (error) {
+				logger.error({ label: Label.SERVER, message: error.message });
+				throw new Error(`Failed to save API key: ${error.message}`);
+			}
+		}),
+
+	resetApiKey: authedProcedure.mutation(async () => {
+		try {
+			const apiKey = await resetApiKey();
+			setRuntimeConfig({ ...getRuntimeConfig(), apiKey });
+			return { apiKey };
+		} catch (error) {
+			logger.error({ label: Label.SERVER, message: error.message });
+			throw new Error(`Failed to reset API key: ${error.message}`);
+		}
+	}),
 
 	// Full replacement for debug page
 	replace: authedProcedure
