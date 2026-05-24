@@ -130,6 +130,9 @@ if (!skipPush) {
 
 if (!skipRelease) {
 	const tagName = `v${pkgJson.version}`;
+	console.log(
+		"read the commits and generate a changelog for the github issue",
+	);
 	const releaseArgs = [
 		"release",
 		"create",
