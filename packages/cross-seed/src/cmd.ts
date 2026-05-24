@@ -191,7 +191,14 @@ program
 	.command("test-notification")
 	.description("Send a test notification")
 	.addOption(verboseOption)
-	.action(withFullRuntime(sendTestNotification));
+	.action(
+		withFullRuntime(async () => {
+			const results = await sendTestNotification();
+			if (results.some((result) => !result.ok)) {
+				process.exitCode = 1;
+			}
+		}),
+	);
 
 program.showHelpAfterError("(add --help for additional information)");
 

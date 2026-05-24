@@ -7,6 +7,8 @@ import { getDbConfig, setDbConfig, updateDbConfig } from "../../dbConfig.js";
 import { getDefaultRuntimeConfig } from "../../configuration.js";
 import { omitUndefined } from "../../utils/object.js";
 import { parseRuntimeConfig } from "../../configSchema.js";
+import { WebhookObjectSchema } from "@cross-seed/shared/configSchema";
+import { sendTestNotification } from "../../pushNotifier.js";
 import { reloadDownloadClients } from "../../clients/TorrentClient.js";
 
 export const settingsRouter = router({
@@ -100,4 +102,22 @@ export const settingsRouter = router({
 			throw new Error(`Failed to validate config: ${error.message}`);
 		}
 	}),
+
+	testNotification: authedProcedure
+		.input(
+			z.object({
+				webhooks: z.array(z.union([z.string(), WebhookObjectSchema])),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			try {
+				const results = await sendTestNotification(input.webhooks);
+				return { results };
+			} catch (error) {
+				logger.error({ label: Label.SERVER, message: error.message });
+				throw new Error(
+					`Failed to send test notification: ${error.message}`,
+				);
+			}
+		}),
 });

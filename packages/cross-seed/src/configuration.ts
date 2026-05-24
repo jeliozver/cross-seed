@@ -13,6 +13,7 @@ import {
 } from "./constants.js";
 import { CrossSeedError } from "./errors.js";
 import { RuntimeConfig } from "./runtimeConfig.js";
+import { WebhookEntry } from "@cross-seed/shared/configSchema";
 import { omitUndefined } from "./utils/object.js";
 
 const require = createRequire(import.meta.url);
@@ -50,7 +51,7 @@ export interface FileConfig {
 	transmissionRpcUrl?: string;
 	delugeRpcUrl?: string;
 	duplicateCategories?: boolean;
-	notificationWebhookUrls?: string[];
+	notificationWebhookUrls?: WebhookEntry[];
 	notificationWebhookUrl?: string;
 	port?: number;
 	host?: string;
@@ -416,17 +417,42 @@ function addClient(clients: Set<string>, prefix: string, url: unknown): void {
 	}
 }
 
-function collectWebhookUrls(fileConfig: FileConfig): string[] | undefined {
-	const urls = new Set<string>();
-	if (isStringArray(fileConfig.notificationWebhookUrls)) {
-		fileConfig.notificationWebhookUrls.forEach((url) => {
-			if (typeof url === "string") urls.add(url);
-		});
+/**
+ * Canonical dedup key for a webhook entry. A plain string and an object that
+ * only carries `{ url }` describe the same webhook target, so both collapse to
+ * the URL; entries with headers/payload use a stable, key-order-independent key.
+ */
+function webhookKey(entry: WebhookEntry): string {
+	if (typeof entry === "string") return entry;
+	if (!entry.headers && !entry.payload) return entry.url;
+	return JSON.stringify({
+		url: entry.url,
+		headers: entry.headers,
+		payload: entry.payload,
+	});
+}
+
+function collectWebhookUrls(
+	fileConfig: FileConfig,
+): FileConfig["notificationWebhookUrls"] | undefined {
+	const seen = new Set<string>();
+	const entries: NonNullable<FileConfig["notificationWebhookUrls"]> = [];
+	if (Array.isArray(fileConfig.notificationWebhookUrls)) {
+		for (const entry of fileConfig.notificationWebhookUrls) {
+			const key = webhookKey(entry);
+			if (!seen.has(key)) {
+				seen.add(key);
+				entries.push(entry);
+			}
+		}
 	}
 	if (typeof fileConfig.notificationWebhookUrl === "string") {
-		urls.add(fileConfig.notificationWebhookUrl);
+		if (!seen.has(fileConfig.notificationWebhookUrl)) {
+			seen.add(fileConfig.notificationWebhookUrl);
+			entries.push(fileConfig.notificationWebhookUrl);
+		}
 	}
-	return urls.size ? Array.from(urls) : undefined;
+	return entries.length ? entries : undefined;
 }
 
 export async function getFileConfig(): Promise<FileConfig | undefined> {

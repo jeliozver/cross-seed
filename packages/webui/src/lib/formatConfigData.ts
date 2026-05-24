@@ -1,35 +1,57 @@
-import { Config } from '@/types/config';
+import {
+  RuntimeConfig,
+  WebhookEntry,
+  WebhookObjectSchema,
+} from '../../../shared/configSchema';
+
+let webhookIdCounter = 0;
 
 /**
- * Currently acts as an identity function—kept around as a dedicated hook
- * point in case the UI needs one-off tweaks to API data in the future.
+ * Generates a stable, unique id for a webhook form row. Used as the React key
+ * and as the key for per-row UI state so it survives add/remove reordering.
+ * A counter is used rather than `crypto.randomUUID()` because the WebUI may be
+ * served from a non-secure context (LAN IP over HTTP) where it is unavailable.
  */
-export function formatConfigDataForForm(config: Config) {
-  return config;
-  //  return {
-  //    ...config,
+export function nextWebhookId(): string {
+  webhookIdCounter += 1;
+  return `webhook-${webhookIdCounter}`;
+}
 
-  // Update empty array fields to have an empty string so the form
-  // fields show
-  //    dataDirs: config.dataDirs?.length ? config.dataDirs : [''],
-  //    linkDirs: config.linkDirs.length ? config.linkDirs : [''],
-  //    torznab: config.torznab.length ? config.torznab : [''],
-  //    sonarr: config.sonarr?.length ? config.sonarr : [''],
-  //    radarr: config.radarr?.length ? config.radarr : [''],
-  //    notificationWebhookUrls: config.notificationWebhookUrls?.length
-  //      ? config.notificationWebhookUrls
-  //      : [''],
-  //    blockList: config.blockList?.length ? config.blockList : [''],
-  //    excludeOlder: convertNumberToRelativeTime(Number(config.excludeOlder)),
-  //    excludeRecentSearch: convertNumberToRelativeTime(
-  //      Number(config.excludeRecentSearch),
-  //    ),
-  //    rssCadence: convertNumberToRelativeTime(Number(config.rssCadence)),
-  //    searchCadence: convertNumberToRelativeTime(Number(config.searchCadence)),
-  //    snatchTimeout: convertNumberToRelativeTime(Number(config.snatchTimeout)),
-  //    searchTimeout: convertNumberToRelativeTime(Number(config.searchTimeout)),
-  //    torrentClients: config.torrentClients?.length
-  //      ? config.torrentClients
-  //      : [''],
-  //  };
+/**
+ * Transforms API config data for the WebUI form. Webhook entries are normalized
+ * to the form's `{ id, url, payload, headers }` shape, with payload/headers
+ * serialized back to JSON text for editing in the textareas.
+ */
+export function formatConfigDataForForm(config: RuntimeConfig) {
+  return {
+    ...config,
+    ...(config.notificationWebhookUrls && {
+      notificationWebhookUrls: config.notificationWebhookUrls.map(
+        (e: WebhookEntry) => {
+          if (typeof e === 'string') {
+            return { id: nextWebhookId(), url: e, payload: '', headers: '' };
+          }
+          const parsed = WebhookObjectSchema.safeParse(e);
+          if (parsed.success) {
+            return {
+              id: nextWebhookId(),
+              url: parsed.data.url,
+              payload: parsed.data.payload
+                ? JSON.stringify(parsed.data.payload)
+                : '',
+              headers: parsed.data.headers
+                ? JSON.stringify(parsed.data.headers)
+                : '',
+            };
+          }
+          return {
+            id: nextWebhookId(),
+            url: '',
+            payload: '',
+            headers: '',
+          };
+        },
+      ),
+    }),
+  };
 }

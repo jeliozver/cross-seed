@@ -1,23 +1,62 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { Loader2, TestTube } from 'lucide-react';
 import { FieldInfo } from '@/components/Form/FieldInfo';
 import { z } from 'zod';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import DeleteOption from '@/components/Buttons/DeleteOption';
 import useConfigForm from '@/hooks/use-config-form';
 import { defaultConnectFormValues } from '@/components/Form/shared-form';
 import { useAppForm } from '@/hooks/form';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/lib/trpc';
-import { formatConfigDataForForm } from '@/lib/formatConfigData';
+import { formatConfigDataForForm, nextWebhookId } from '@/lib/formatConfigData';
 import { connectValidationSchema } from '@/types/config';
 import { FormValidationProvider } from '@/contexts/Form/form-validation-provider';
 import { pickSchemaFields } from '@/lib/pick-schema-fields';
 import { Page } from '@/components/Page';
 import { useSettingsFormSubmit } from '@/hooks/use-settings-form-submit';
-import { RuntimeConfig } from '../../../../shared/configSchema';
+import { RuntimeConfig, WebhookEntry } from '../../../../shared/configSchema';
 
 type ConnectFormData = z.infer<typeof connectValidationSchema>;
+
+type WebhookFormEntry = {
+  id: string;
+  url: string;
+  payload: string;
+  headers: string;
+};
+
+function transformWebhooksForApi(entries: WebhookFormEntry[]): WebhookEntry[] {
+  return entries
+    .filter((e) => e.url !== '')
+    .map((e) => {
+      if (!e.payload && !e.headers) return e.url;
+      const obj: { url: string; payload?: unknown; headers?: unknown } = {
+        url: e.url,
+      };
+      if (e.payload) {
+        try {
+          obj.payload = JSON.parse(e.payload);
+        } catch {
+          /* invalid JSON, omit */
+        }
+      }
+      if (e.headers) {
+        try {
+          obj.headers = JSON.parse(e.headers);
+        } catch {
+          /* invalid JSON, omit */
+        }
+      }
+      return obj;
+    });
+}
 
 function ConnectSettings() {
   const { isFieldRequired } = useConfigForm(connectValidationSchema);
@@ -41,7 +80,19 @@ function ConnectSettings() {
     }),
   );
 
-  const handleSubmit = useSettingsFormSubmit();
+  const baseHandleSubmit = useSettingsFormSubmit();
+  const handleSubmit = useCallback(
+    async ({ value }: { value: ConnectFormData }) => {
+      const transformed = {
+        ...value,
+        notificationWebhookUrls: transformWebhooksForApi(
+          value.notificationWebhookUrls as WebhookFormEntry[],
+        ),
+      };
+      return baseHandleSubmit({ value: transformed });
+    },
+    [baseHandleSubmit],
+  );
 
   const form = useAppForm({
     defaultValues: (configData ?? defaultConnectFormValues) as ConnectFormData,
@@ -51,6 +102,47 @@ function ConnectSettings() {
     },
   });
 
+  const { mutate: testWebhooks, isPending: isTesting } = useMutation(
+    trpc.settings.testNotification.mutationOptions({
+      onSuccess: (data) => {
+        const results = data.results;
+        const failures = results.filter((r) => !r.ok);
+        const plural = results.length === 1 ? '' : 's';
+        if (failures.length === 0) {
+          toast.success(
+            `All ${results.length} webhook${plural} sent successfully!`,
+          );
+        } else {
+          const detail = failures
+            .map(
+              (r) => `${r.url.replace(/:\/\/[^@/]*@/, '://***@')} — ${r.error}`,
+            )
+            .join('\n');
+          toast.error(
+            `${failures.length} of ${results.length} webhook${plural} failed:\n${detail}`,
+          );
+        }
+      },
+      onError: (error) => {
+        toast.error(`Test failed: ${error.message}`);
+      },
+    }),
+  );
+
+  const [advancedOpen, setAdvancedOpen] = useState<Set<string>>(new Set());
+  // Seed the expanded-advanced state once, from webhooks that load with
+  // custom headers/payload, so they render expanded without coupling the
+  // toggle's open/closed state to whether data is present.
+  const seededAdvancedRef = useRef(false);
+  useEffect(() => {
+    if (seededAdvancedRef.current || !configData) return;
+    seededAdvancedRef.current = true;
+    const entries = (configData.notificationWebhookUrls ??
+      []) as WebhookFormEntry[];
+    setAdvancedOpen(
+      new Set(entries.filter((e) => e.headers || e.payload).map((e) => e.id)),
+    );
+  }, [configData]);
   const [lastFieldAdded, setLastFieldAdded] = useState<string | null>(null);
   useEffect(() => {
     if (lastFieldAdded) {
@@ -143,7 +235,7 @@ function ConnectSettings() {
                                     <form.Subscribe
                                       selector={(f) =>
                                         f.fieldMeta[
-                                        `${field.name}[${index}]` as keyof typeof f.fieldMeta
+                                          `${field.name}[${index}]` as keyof typeof f.fieldMeta
                                         ]
                                       }
                                     >
@@ -216,7 +308,7 @@ function ConnectSettings() {
                                     <form.Subscribe
                                       selector={(f) =>
                                         f.fieldMeta[
-                                        `${field.name}[${index}]` as keyof typeof f.fieldMeta
+                                          `${field.name}[${index}]` as keyof typeof f.fieldMeta
                                         ]
                                       }
                                     >
@@ -245,7 +337,7 @@ function ConnectSettings() {
                     }}
                   </form.Field>
                 </div>
-                <div className="">
+                <div>
                   <form.Field
                     name="notificationWebhookUrls"
                     mode="array"
@@ -255,68 +347,227 @@ function ConnectSettings() {
                       return (
                         <div className="space-y-3">
                           <Label htmlFor={field.name} className="block w-full">
-                            Notification Webhook URL(s)
+                            Notification Webhook(s)
                             {isFieldRequired(field.name) && (
                               <span className="pl-1 text-red-500">*</span>
                             )}
                           </Label>
                           {field.state.value?.map(
-                            (_: string, index: number) => {
-                              return (
-                                <div
-                                  key={index}
-                                  className="gap-y- mb-3 flex flex-col"
-                                >
-                                  <form.AppField
-                                    name={`notificationWebhookUrls[${index}]`}
+                            (entry: WebhookFormEntry, index: number) => (
+                              <fieldset
+                                key={entry.id}
+                                className="border-border space-y-2 rounded-md border p-3"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <form.Field
+                                    name={`notificationWebhookUrls[${index}].url`}
                                     validators={{
                                       onBlur: z
                                         .string()
-                                        .min(3)
                                         .url()
                                         .or(z.literal('')),
                                     }}
                                   >
                                     {(subfield) => (
-                                      <subfield.ArrayField
-                                        showDelete={
-                                          field.state.value &&
-                                          field.state.value?.length > 1
+                                      <Input
+                                        id={`notificationWebhookUrls-${index}-url`}
+                                        name={subfield.name}
+                                        value={subfield.state.value}
+                                        onChange={(e) =>
+                                          subfield.handleChange(e.target.value)
                                         }
-                                        index={index}
-                                        onDelete={() => {
-                                          field.removeValue(index);
-                                        }}
+                                        onBlur={subfield.handleBlur}
+                                        placeholder="https://example.com/webhook"
+                                        className="flex-1"
                                       />
                                     )}
-                                  </form.AppField>
-                                  <form.Subscribe
-                                    selector={(f) =>
-                                      f.fieldMeta[
-                                      `${field.name}[${index}]` as keyof typeof f.fieldMeta
-                                      ]
-                                    }
-                                  >
-                                    {(fieldMeta) => (
-                                      <FieldInfo fieldMeta={fieldMeta} />
-                                    )}
-                                  </form.Subscribe>
+                                  </form.Field>
+                                  {(field.state.value?.length ?? 0) > 1 && (
+                                    <DeleteOption
+                                      onClick={() => field.removeValue(index)}
+                                    />
+                                  )}
                                 </div>
-                              );
-                            },
+                                <form.Subscribe
+                                  selector={(f) =>
+                                    f.fieldMeta[
+                                      `notificationWebhookUrls[${index}].url` as keyof typeof f.fieldMeta
+                                    ]
+                                  }
+                                >
+                                  {(fieldMeta) => (
+                                    <FieldInfo fieldMeta={fieldMeta} />
+                                  )}
+                                </form.Subscribe>
+                                <div className="mt-1 flex items-center gap-2">
+                                  <Switch
+                                    id={`notificationWebhookUrls-${index}-advanced`}
+                                    checked={advancedOpen.has(entry.id)}
+                                    onCheckedChange={(checked) => {
+                                      setAdvancedOpen((prev) => {
+                                        const next = new Set(prev);
+                                        if (checked) {
+                                          next.add(entry.id);
+                                        } else {
+                                          next.delete(entry.id);
+                                        }
+                                        return next;
+                                      });
+                                    }}
+                                  />
+                                  <Label
+                                    htmlFor={`notificationWebhookUrls-${index}-advanced`}
+                                    className="text-muted-foreground text-xs"
+                                  >
+                                    Custom headers & payload
+                                  </Label>
+                                </div>
+                                {advancedOpen.has(entry.id) && (
+                                  <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                    <div>
+                                      <Label className="text-muted-foreground text-xs">
+                                        Headers (JSON)
+                                      </Label>
+                                      <form.Field
+                                        name={`notificationWebhookUrls[${index}].headers`}
+                                      >
+                                        {(subfield) => (
+                                          <Textarea
+                                            name={subfield.name}
+                                            value={subfield.state.value}
+                                            onChange={(e) =>
+                                              subfield.handleChange(
+                                                e.target.value,
+                                              )
+                                            }
+                                            onBlur={subfield.handleBlur}
+                                            placeholder='{"Authorization": "Bearer token"}'
+                                            rows={2}
+                                            className="resize-y font-mono text-xs"
+                                          />
+                                        )}
+                                      </form.Field>
+                                      <form.Subscribe
+                                        selector={(f) =>
+                                          f.fieldMeta[
+                                            `notificationWebhookUrls[${index}].headers` as keyof typeof f.fieldMeta
+                                          ]
+                                        }
+                                      >
+                                        {(fieldMeta) => (
+                                          <FieldInfo fieldMeta={fieldMeta} />
+                                        )}
+                                      </form.Subscribe>
+                                    </div>
+                                    <div>
+                                      <Label className="text-muted-foreground text-xs">
+                                        Payload (JSON)
+                                      </Label>
+                                      <form.Field
+                                        name={`notificationWebhookUrls[${index}].payload`}
+                                      >
+                                        {(subfield) => (
+                                          <Textarea
+                                            name={subfield.name}
+                                            value={subfield.state.value}
+                                            onChange={(e) =>
+                                              subfield.handleChange(
+                                                e.target.value,
+                                              )
+                                            }
+                                            onBlur={subfield.handleBlur}
+                                            placeholder='{"topic": "cross-seed", "priority": 3, "tags": ["seedbox"]}'
+                                            rows={2}
+                                            className="resize-y font-mono text-xs"
+                                          />
+                                        )}
+                                      </form.Field>
+                                      <form.Subscribe
+                                        selector={(f) =>
+                                          f.fieldMeta[
+                                            `notificationWebhookUrls[${index}].payload` as keyof typeof f.fieldMeta
+                                          ]
+                                        }
+                                      >
+                                        {(fieldMeta) => (
+                                          <FieldInfo fieldMeta={fieldMeta} />
+                                        )}
+                                      </form.Subscribe>
+                                    </div>
+                                  </div>
+                                )}
+                              </fieldset>
+                            ),
                           )}
-                          <Button
-                            variant="secondary"
-                            type="button"
-                            onClick={() => {
-                              field.pushValue('');
-                              const newFieldId = `${field.name}-${field.state.value?.length ? field.state.value.length - 1 : 0}`;
-                              setLastFieldAdded(newFieldId);
-                            }}
-                            title={`Add ${field.name}`}
-                          >
-                            Add
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="secondary"
+                              type="button"
+                              onClick={() => {
+                                field.pushValue({
+                                  id: nextWebhookId(),
+                                  url: '',
+                                  payload: '',
+                                  headers: '',
+                                });
+                                setLastFieldAdded(
+                                  `notificationWebhookUrls-${field.state.value?.length ?? 0}-url`,
+                                );
+                              }}
+                              title="Add webhook"
+                            >
+                              Add
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              type="button"
+                              disabled={
+                                isTesting ||
+                                !field.state.value?.some((e) => e.url)
+                              }
+                              onClick={() => {
+                                const entries = (field.state.value ??
+                                  []) as WebhookFormEntry[];
+                                const hasInvalidJson = entries.some((e) =>
+                                  [e.headers, e.payload].some((text) => {
+                                    if (!text) return false;
+                                    try {
+                                      JSON.parse(text);
+                                      return false;
+                                    } catch {
+                                      return true;
+                                    }
+                                  }),
+                                );
+                                if (hasInvalidJson) {
+                                  toast.error(
+                                    'Fix invalid headers/payload JSON before testing.',
+                                  );
+                                  return;
+                                }
+                                const webhooks =
+                                  transformWebhooksForApi(entries);
+                                if (webhooks.length === 0) {
+                                  toast.error('No webhooks to test.');
+                                  return;
+                                }
+                                testWebhooks({ webhooks });
+                              }}
+                              title="Test all configured webhooks"
+                            >
+                              {isTesting ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                  Testing…
+                                </>
+                              ) : (
+                                <>
+                                  <TestTube className="h-4 w-4" />
+                                  Test Webhooks
+                                </>
+                              )}
+                            </Button>
+                          </div>
                         </div>
                       );
                     }}
