@@ -455,8 +455,12 @@ function collectWebhookUrls(
 	return entries.length ? entries : undefined;
 }
 
+export function getFileConfigPath(): string {
+	return path.join(appDir(), "config.js");
+}
+
 export async function getFileConfig(): Promise<FileConfig | undefined> {
-	const configPath = path.join(appDir(), "config.js");
+	const configPath = getFileConfigPath();
 
 	try {
 		return (await import(pathToFileURL(configPath).toString())).default;
