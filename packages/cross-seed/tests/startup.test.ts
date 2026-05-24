@@ -4,6 +4,8 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const TEST_ROOT = await mkdtemp(join(tmpdir(), "cross-seed-startup-tests-"));
+const MIGRATED_CONFIG_COMMENT =
+	"// This config.js file was imported into the cross-seed v7 database. Use the Web UI to view or change settings.\n\n";
 
 type StartupEnv = {
 	configDir: string;
@@ -63,7 +65,7 @@ export default {
 			code: "ENOENT",
 		});
 		await expect(readFile(`${env.configPath}.bak`, "utf8")).resolves.toBe(
-			configContents,
+			`${MIGRATED_CONFIG_COMMENT}${configContents}`,
 		);
 		expect(runtimeConfig.torznab).toEqual([
 			"https://example.com/api?apikey=abc",
@@ -106,7 +108,7 @@ export default {
 			"previous backup",
 		);
 		await expect(readFile(`${env.configPath}.bak.1`, "utf8")).resolves.toBe(
-			configContents,
+			`${MIGRATED_CONFIG_COMMENT}${configContents}`,
 		);
 	});
 });

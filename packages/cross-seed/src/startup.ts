@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdir, rename } from "fs/promises";
+import { mkdir, readFile, rename, writeFile } from "fs/promises";
 import path from "path";
 import { resetApiKey } from "./auth.js";
 import { instantiateDownloadClients } from "./clients/TorrentClient.js";
@@ -81,6 +81,9 @@ type CommanderActionCb = (
 	options: Record<string, unknown>,
 ) => void | Promise<void>;
 
+const MIGRATED_CONFIG_COMMENT =
+	"// This config.js file was imported into the cross-seed v7 database. Use the Web UI to view or change settings.\n\n";
+
 /**
  * Initializes only the database, runs the callback, then cleans up
  */
@@ -132,6 +135,8 @@ async function backupFileConfig(): Promise<string> {
 	const configPath = getFileConfigPath();
 	const backupPath = await getFileConfigBackupPath(configPath);
 	await rename(configPath, backupPath);
+	const backupContents = await readFile(backupPath, "utf8");
+	await writeFile(backupPath, `${MIGRATED_CONFIG_COMMENT}${backupContents}`);
 	return backupPath;
 }
 
