@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import Logo from '@/assets/cross-seed.svg';
 import {
   useMutation,
+  useQuery,
   useSuspenseQuery,
   useQueryClient,
 } from '@tanstack/react-query';
@@ -38,6 +39,7 @@ import {
   SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { useTRPC } from '@/lib/trpc';
+import { cn } from '@/lib/utils';
 
 const navItems = [
   {
@@ -121,6 +123,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: buildInfoResponse } = useSuspenseQuery(
     trpc.meta.getBuildInfo.queryOptions(),
   );
+  const { data: healthData } = useQuery({
+    ...trpc.health.get.queryOptions(),
+    refetchInterval: 60_000,
+  });
+  const healthStatus = healthData?.problems.some(
+    (problem) => problem.severity === 'error',
+  )
+    ? 'error'
+    : healthData?.problems.some((problem) => problem.severity === 'warning')
+      ? 'warning'
+      : undefined;
   const buildInfo = buildInfoResponse?.build;
   const buildVersion = buildInfoResponse?.version;
   const buildTag = buildInfo?.tag ?? buildVersion;
@@ -235,6 +248,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       >
                         {item.icon}
                         <span>{item.title}</span>
+                        {item.title === 'Health' && healthStatus && (
+                          <span
+                            className={cn(
+                              'ml-auto size-2 rounded-full',
+                              healthStatus === 'error'
+                                ? 'bg-destructive'
+                                : 'bg-amber-500',
+                            )}
+                            aria-label={`Health has ${healthStatus}s`}
+                          />
+                        )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
