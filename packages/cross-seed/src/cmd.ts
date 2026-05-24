@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import chalk from "chalk";
 import { Option, program } from "commander";
+import { setTimeout as delay } from "node:timers/promises";
 import { getApiKey, resetApiKey } from "./auth.js";
 import { PROGRAM_NAME, PROGRAM_VERSION } from "./constants.js";
 import { db } from "./db.js";
@@ -19,6 +20,11 @@ import { resetUsers } from "./userAuth.js";
 const verboseOption = new Option("-v, --verbose", "Log verbose output").default(
 	false,
 );
+
+async function runDaemonStartupWork(): Promise<void> {
+	await indexTorrentsAndDataDirs({ startup: true });
+	await jobsLoop();
+}
 
 program.name(PROGRAM_NAME);
 program.description(chalk.yellow.bold(`${PROGRAM_NAME} v${PROGRAM_VERSION}`));
@@ -128,14 +134,25 @@ program
 	.addOption(verboseOption)
 	.action(
 		withFullRuntime(async (options) => {
+			let startStartupWork: () => void;
+			const startupWorkPromise = new Promise<void>((resolve, reject) => {
+				startStartupWork = () => {
+					delay(1000)
+						.then(runDaemonStartupWork)
+						.then(resolve, reject);
+				};
+			});
 			const serverPromise = serve(
 				options.port,
 				options.host,
 				options.basePath,
+				startStartupWork!,
 			);
-			await indexTorrentsAndDataDirs({ startup: true });
+			if (!options.port) {
+				startStartupWork!();
+			}
 			// technically this will never resolve, but it's necessary to keep the process running
-			await Promise.all([serverPromise, jobsLoop()]);
+			await Promise.all([serverPromise, startupWorkPromise]);
 		}),
 	);
 

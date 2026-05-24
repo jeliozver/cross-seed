@@ -42,6 +42,7 @@ export async function serve(
 	port = 2468,
 	host = "0.0.0.0",
 	basePath = "",
+	onListening?: () => void,
 ): Promise<void> {
 	if (!port) return;
 	const server = await createServer(basePath);
@@ -59,6 +60,7 @@ export async function serve(
 				label: Label.SERVER,
 				message: `Server is running on port ${port}, ^C to stop.`,
 			});
+			onListening?.();
 		});
 
 		function stop() {
