@@ -12,7 +12,11 @@ import {
 	transformFileConfig,
 } from "./configuration.js";
 import { db } from "./db.js";
-import { getDbConfig, setDbConfig } from "./dbConfig.js";
+import {
+	getDbConfig,
+	migrateLegacyApiKeyToDbConfig,
+	setDbConfig,
+} from "./dbConfig.js";
 import {
 	exitOnCrossSeedErrors,
 	initializeLogger,
@@ -95,7 +99,10 @@ export function withMinimalRuntime<
 ): (...args: Parameters<T>) => Promise<void> {
 	return async (...args: Parameters<T>) => {
 		try {
-			if (migrate) await db.migrate.latest();
+			if (migrate) {
+				await db.migrate.latest();
+				await migrateLegacyApiKeyToDbConfig();
+			}
 			const output = await entrypoint(...args);
 			if (output) console.log(output);
 		} catch (e) {

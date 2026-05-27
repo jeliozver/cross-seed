@@ -12,6 +12,7 @@ type AuthEnv = {
 	setApiKey: typeof import("../src/auth.js").setApiKey;
 	createDevLogin: typeof import("../src/devLogin.js").createDevLogin;
 	getDbConfig: typeof import("../src/dbConfig.js").getDbConfig;
+	migrateLegacyApiKeyToDbConfig: typeof import("../src/dbConfig.js").migrateLegacyApiKeyToDbConfig;
 	getDefaultRuntimeConfig: typeof import("../src/configuration.js").getDefaultRuntimeConfig;
 	setRuntimeConfig: typeof import("../src/runtimeConfig.js").setRuntimeConfig;
 	validateSession: typeof import("../src/userAuth.js").validateSession;
@@ -31,7 +32,8 @@ async function createAuthEnv(): Promise<AuthEnv> {
 	const { getApiKey, resetApiKey, setApiKey } =
 		await import("../src/auth.js");
 	const { createDevLogin } = await import("../src/devLogin.js");
-	const { getDbConfig } = await import("../src/dbConfig.js");
+	const { getDbConfig, migrateLegacyApiKeyToDbConfig } =
+		await import("../src/dbConfig.js");
 	const { setRuntimeConfig } = await import("../src/runtimeConfig.js");
 	const { validateSession } = await import("../src/userAuth.js");
 
@@ -47,6 +49,7 @@ async function createAuthEnv(): Promise<AuthEnv> {
 		setApiKey,
 		createDevLogin,
 		getDbConfig,
+		migrateLegacyApiKeyToDbConfig,
 		getDefaultRuntimeConfig,
 		setRuntimeConfig,
 		validateSession,
@@ -74,6 +77,37 @@ describe.sequential("api key management", () => {
 		});
 
 		await expect(env.getApiKey()).resolves.toBe(activeApiKey);
+	});
+
+	it("copies the legacy settings.apikey into settings_json when missing", async () => {
+		const env = await createAuthEnv();
+		const legacyApiKey = "legacy-api-key".repeat(2);
+
+		await env.db("settings").update({
+			apikey: legacyApiKey,
+			settings_json: JSON.stringify({ useClientTorrents: false }),
+		});
+
+		await env.migrateLegacyApiKeyToDbConfig();
+
+		expect(await env.getDbConfig()).toMatchObject({
+			apiKey: legacyApiKey,
+			useClientTorrents: false,
+		});
+	});
+
+	it("does not overwrite an existing settings_json API key with the legacy column", async () => {
+		const env = await createAuthEnv();
+		const activeApiKey = "active-api-key".repeat(2);
+
+		await env.db("settings").update({
+			apikey: "legacy-api-key".repeat(2),
+			settings_json: JSON.stringify({ apiKey: activeApiKey }),
+		});
+
+		await env.migrateLegacyApiKeyToDbConfig();
+
+		expect((await env.getDbConfig())?.apiKey).toBe(activeApiKey);
 	});
 
 	it("sets and resets the same API key source used by readers", async () => {

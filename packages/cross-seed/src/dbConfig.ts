@@ -18,6 +18,28 @@ export async function getDbConfig(): Promise<
 	return parseRuntimeConfigOverrides(JSON.parse(row.settings_json));
 }
 
+export async function migrateLegacyApiKeyToDbConfig(): Promise<void> {
+	await db.transaction(async (trx) => {
+		const row = await trx("settings")
+			.select("apikey", "settings_json")
+			.first();
+		if (!row?.apikey) return;
+
+		const currentOverrides =
+			row.settings_json == null
+				? {}
+				: parseRuntimeConfigOverrides(JSON.parse(row.settings_json));
+		if (currentOverrides.apiKey) return;
+
+		await trx("settings").update({
+			settings_json: JSON.stringify({
+				...currentOverrides,
+				apiKey: row.apikey,
+			}),
+		});
+	});
+}
+
 export async function setDbConfig(
 	config: Partial<RuntimeConfig>,
 ): Promise<void> {
