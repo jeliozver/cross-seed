@@ -39,6 +39,8 @@ export async function getApiKey(): Promise<string> {
 		if (typeof apiKey === "string" && apiKey.length > 0) return apiKey;
 	}
 
+	// Migration 17 copies legacy settings.apikey into settings_json.apiKey.
+	// Keep this fallback defensive for interrupted or manually restored DBs.
 	if (row?.apikey) return row.apikey;
 
 	const { apiKey: runtimeConfigApiKey } = getRuntimeConfig();
