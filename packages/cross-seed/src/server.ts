@@ -2,6 +2,7 @@ import fastifyCookie from "@fastify/cookie";
 import fastify, { FastifyInstance } from "fastify";
 import { Label, logger } from "./logger.js";
 import { baseApiPlugin } from "./routes/baseApi.js";
+import { devLoginPlugin } from "./routes/devLogin.js";
 import { indexerApiPlugin } from "./routes/indexerApi.js";
 import { staticFrontendPlugin } from "./routes/staticFrontendPlugin.js";
 import { appTrpcPlugin } from "./trpc/fastifyAdapter.js";
@@ -17,6 +18,7 @@ async function rootPlugin(
 	{ basePath }: { basePath: string },
 ) {
 	await app.register(fastifyCookie);
+	await app.register(devLoginPlugin, { basePath });
 	await app.register(apiPlugin, { prefix: "/api" });
 	await app.register(staticFrontendPlugin, { basePath });
 }

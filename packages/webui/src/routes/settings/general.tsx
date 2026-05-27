@@ -2,11 +2,11 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { FieldInfo } from '@/components/Form/FieldInfo';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type SyntheticEvent } from 'react';
 import useConfigForm from '@/hooks/use-config-form';
 import { defaultGeneralFormValues } from '@/components/Form/shared-form';
 import { useAppForm } from '@/hooks/form';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@/lib/trpc';
 import { Input } from '@/components/ui/input';
 import DeleteOption from '@/components/Buttons/DeleteOption';
@@ -18,6 +18,8 @@ import { Page } from '@/components/Page';
 import { useSettingsFormSubmit } from '@/hooks/use-settings-form-submit';
 import { z } from 'zod';
 import { RuntimeConfig } from '../../../../shared/configSchema';
+import { Clipboard, RotateCcw } from 'lucide-react';
+import { toast } from 'sonner';
 
 type GeneralFormData = z.infer<typeof generalValidationSchema>;
 
@@ -25,23 +27,17 @@ function GeneralSettings() {
   const { isFieldRequired } = useConfigForm(generalValidationSchema);
 
   const trpc = useTRPC();
-  const { data: configData } = useQuery(
-    trpc.settings.get.queryOptions(undefined, {
-      select: (data: {
-        config: RuntimeConfig;
-        apikey: string;
-      }): Partial<GeneralFormData> => {
-        const fullDataset = formatConfigDataForForm(data.config);
-        const filteredData = pickSchemaFields(
-          generalValidationSchema,
-          fullDataset,
-          { includeUndefined: true },
-        ) as Partial<GeneralFormData>;
-
-        return filteredData;
-      },
-    }),
+  const queryClient = useQueryClient();
+  const { data: settingsData } = useQuery(
+    trpc.settings.get.queryOptions(undefined),
   );
+  const configData = settingsData?.config
+    ? (pickSchemaFields(
+        generalValidationSchema,
+        formatConfigDataForForm(settingsData.config as RuntimeConfig),
+        { includeUndefined: true },
+      ) as Partial<GeneralFormData>)
+    : undefined;
 
   const handleSubmit = useSettingsFormSubmit();
 
@@ -54,6 +50,7 @@ function GeneralSettings() {
   });
 
   const [lastFieldAdded, setLastFieldAdded] = useState<string | null>(null);
+  const [apiKeyDraft, setApiKeyDraft] = useState('');
   useEffect(() => {
     if (lastFieldAdded) {
       const el = document.getElementById(lastFieldAdded);
@@ -61,6 +58,46 @@ function GeneralSettings() {
       setLastFieldAdded(null);
     }
   }, [lastFieldAdded]);
+
+  useEffect(() => {
+    if (settingsData?.apiKey) {
+      setApiKeyDraft(settingsData.apiKey);
+    }
+  }, [settingsData?.apiKey]);
+
+  const resetApiKeyMutation = useMutation(
+    trpc.settings.resetApiKey.mutationOptions({
+      onSuccess: async ({ apiKey }) => {
+        setApiKeyDraft(apiKey);
+        await queryClient.invalidateQueries({
+          queryKey: trpc.settings.get.queryKey(),
+          exact: false,
+        });
+        toast.success('API key regenerated and saved');
+      },
+      onError: (error) => {
+        toast.error('Failed to regenerate API key', {
+          description: error.message || 'An unknown error occurred',
+        });
+      },
+    }),
+  );
+
+  const selectApiKey = (event: SyntheticEvent<HTMLInputElement>) => {
+    event.currentTarget.select();
+  };
+
+  const copyApiKey = async () => {
+    try {
+      await navigator.clipboard.writeText(apiKeyDraft);
+      toast.success('API key copied');
+    } catch (error) {
+      toast.error('Failed to copy API key', {
+        description:
+          error instanceof Error ? error.message : 'Clipboard unavailable',
+      });
+    }
+  };
 
   return (
     <Page>
@@ -187,6 +224,41 @@ function GeneralSettings() {
                       </div>
                     )}
                   </form.Field>
+                </div>
+                <div className="space-y-3">
+                  <Label htmlFor="apiKey">API Key</Label>
+                  <div className="flex max-w-3xl flex-col gap-2 lg:flex-row">
+                    <Input
+                      id="apiKey"
+                      type="text"
+                      value={apiKeyDraft}
+                      autoComplete="off"
+                      spellCheck={false}
+                      readOnly
+                      onClick={selectApiKey}
+                      onFocus={selectApiKey}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={!apiKeyDraft}
+                        onClick={copyApiKey}
+                      >
+                        <Clipboard />
+                        Copy
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={resetApiKeyMutation.isPending}
+                        onClick={() => resetApiKeyMutation.mutate()}
+                      >
+                        <RotateCcw />
+                        Regenerate & Save
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </fieldset>
               <form.AppForm>
