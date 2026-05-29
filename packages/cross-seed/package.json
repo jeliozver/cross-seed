@@ -17,7 +17,7 @@
 		"coverage": "vitest run --coverage",
 		"build": "tsc -b tsconfig.json",
 		"build:all": "npm run build && npm -C ../.. run build:api-types && npm -C ../.. run build:webui && npm run copy:webui",
-		"copy:webui": "rimraf dist/webui && mkdir -p dist && cp -r ../webui/dist dist/webui",
+		"copy:webui": "node ../../scripts/copy-webui.js",
 		"watch": "tsc -b --watch --preserveWatchOutput",
 		"dev": "node --watch dist/cmd.js daemon",
 		"prepublishOnly": "rimraf dist tsconfig.tsbuildinfo && npm -C ../.. run build",

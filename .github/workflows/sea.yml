@@ -51,12 +51,12 @@ jobs:
               env:
                   SEA_TARGETS: ${{ matrix.target }}
               run: npm run build:sea
-            - name: Smoke test SEA
-              run: ./sea/${{ matrix.binary }} --version
-              shell: bash
             - name: Upload SEA
               uses: actions/upload-artifact@v4
               with:
                   name: ${{ matrix.binary }}
                   path: sea/${{ matrix.binary }}
                   if-no-files-found: error
+            - name: Smoke test SEA
+              run: ./sea/${{ matrix.binary }} --version
+              shell: bash
