@@ -93,7 +93,13 @@ if (!skipRelease) {
 	}
 }
 
-run(npmCmd, ["--workspaces=false", "login"]);
+const npmWhoami = spawnSync(npmCmd, ["--workspaces=false", "whoami"], {
+	stdio: "ignore",
+	cwd: pkgDir,
+});
+if (npmWhoami.status !== 0) {
+	run(npmCmd, ["--workspaces=false", "login"]);
+}
 run(npmCmd, ["--workspaces=false", "version", rel]);
 runRoot(npmCmd, ["install", "--package-lock-only"]);
 
