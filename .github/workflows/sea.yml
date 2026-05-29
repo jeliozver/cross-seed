@@ -2,6 +2,9 @@ name: sea
 
 on:
     workflow_dispatch:
+    release:
+        types:
+            - published
     push:
         branches:
             - modern-node-sea-setup
@@ -67,10 +70,10 @@ jobs:
                   path: sea/${{ matrix.binary }}
                   if-no-files-found: error
             - name: Upload SEA to release
-              if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') }}
+              if: ${{ github.event_name == 'release' && startsWith(github.event.release.tag_name, 'v') }}
               env:
                   GH_TOKEN: ${{ github.token }}
-              run: gh release upload "${{ github.ref_name }}" "sea/${{ matrix.binary }}" --clobber
+              run: gh release upload "${{ github.event.release.tag_name }}" "sea/${{ matrix.binary }}" --clobber
             - name: Smoke test SEA
               if: ${{ matrix.smoke != false }}
               run: ./sea/${{ matrix.binary }} --version
