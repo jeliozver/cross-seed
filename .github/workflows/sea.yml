@@ -3,6 +3,8 @@ name: sea
 on:
     workflow_dispatch:
     push:
+        branches:
+            - modern-node-sea-setup
         tags:
             - "v*"
 
