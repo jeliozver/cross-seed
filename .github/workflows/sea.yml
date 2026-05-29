@@ -26,9 +26,11 @@ jobs:
                     - target: linux-x64
                       runner: ubuntu-latest
                       binary: cross-seed-linux-x64
+                      smoke: true
                     - target: linux-arm64
                       runner: ubuntu-24.04-arm
                       binary: cross-seed-linux-arm64
+                      smoke: true
                     - target: darwin-x64
                       runner: macos-15-intel
                       binary: cross-seed-darwin-x64
@@ -36,12 +38,15 @@ jobs:
                     - target: darwin-arm64
                       runner: macos-15
                       binary: cross-seed-darwin-arm64
+                      smoke: true
                     - target: win-x64
                       runner: windows-latest
                       binary: cross-seed-win-x64.exe
+                      smoke: true
                     - target: win-arm64
                       runner: windows-11-arm
                       binary: cross-seed-win-arm64.exe
+                      smoke: true
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
