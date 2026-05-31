@@ -242,7 +242,9 @@ function GeneralSettings() {
                         type="button"
                         variant="outline"
                         disabled={!apiKeyDraft}
-                        onClick={() => { void copyApiKey(); }}
+                        onClick={() => {
+                          void copyApiKey();
+                        }}
                       >
                         <Clipboard />
                         Copy

@@ -39,6 +39,10 @@ function toBoolean(value: boolean | 'indeterminate'): boolean {
   return value === true;
 }
 
+function getItemId(item: { id: string | number }) {
+  return String(item.id);
+}
+
 const PAGE_SIZE = 25;
 const MAX_BULK_SELECTION = 20;
 
@@ -95,8 +99,11 @@ function LibraryPage() {
   const rangeEnd = data.total === 0 ? 0 : page * PAGE_SIZE + items.length;
 
   const allSelectedOnPage =
-    items.length > 0 && items.every((item) => selectedItems.has(item.id));
-  const someSelectedOnPage = items.some((item) => selectedItems.has(item.id));
+    items.length > 0 &&
+    items.every((item) => selectedItems.has(getItemId(item)));
+  const someSelectedOnPage = items.some((item) =>
+    selectedItems.has(getItemId(item)),
+  );
 
   const selectedCount = selectedItems.size;
 
@@ -105,10 +112,13 @@ function LibraryPage() {
       const updated = new Map(prev);
       if (checked) {
         items.forEach((item) =>
-          updated.set(item.id, { id: item.id, name: item.name }),
+          updated.set(getItemId(item), {
+            id: getItemId(item),
+            name: item.name,
+          }),
         );
       } else {
-        items.forEach((item) => updated.delete(item.id));
+        items.forEach((item) => updated.delete(getItemId(item)));
       }
       return updated;
     });
@@ -369,10 +379,11 @@ function LibraryPage() {
               </TableRow>
             ) : (
               items.map((item) => {
-                const isSelected = selectedItems.has(item.id);
+                const itemId = getItemId(item);
+                const isSelected = selectedItems.has(itemId);
                 return (
                   <TableRow
-                    key={item.id}
+                    key={itemId}
                     data-state={isSelected ? 'selected' : undefined}
                     className={isSelected ? 'bg-muted/60' : undefined}
                   >
@@ -381,7 +392,10 @@ function LibraryPage() {
                         aria-label={`Select ${item.name}`}
                         checked={isSelected}
                         onCheckedChange={(value) =>
-                          toggleItem(item, toBoolean(value))
+                          toggleItem(
+                            { id: itemId, name: item.name },
+                            toBoolean(value),
+                          )
                         }
                       />
                     </TableCell>

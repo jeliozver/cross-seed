@@ -1,7 +1,7 @@
 import { Action } from '@cross-seed/shared/constants';
 import { useEffect, useState } from 'react';
 import useConfigForm from '@/hooks/use-config-form';
-import { formOpts } from '@/components/Form/shared-form';
+import { defaultDownloadClientFormValues } from '@/components/Form/shared-form';
 import { useAppForm } from '@/hooks/form';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/lib/trpc';
@@ -42,7 +42,7 @@ import { useSaveConfigHook } from '@/hooks/saveFormHook';
 import z from 'zod';
 import { RuntimeConfig } from '@cross-seed/shared/configSchema';
 
-type ClientFormData = z.infer<typeof downloaderValidationSchema>;
+type ClientFormData = z.input<typeof downloaderValidationSchema>;
 
 function TorrentClientsSettings() {
   const trpc = useTRPC();
@@ -64,7 +64,7 @@ function TorrentClientsSettings() {
     trpc.settings.get.queryOptions(undefined, {
       select: (data: {
         config: RuntimeConfig;
-        apikey: string;
+        apiKey: string;
       }): Partial<ClientFormData> => {
         const fullDataset = formatConfigDataForForm(data.config);
         const filteredData = pickSchemaFields(
@@ -81,8 +81,8 @@ function TorrentClientsSettings() {
   const handleSubmit = useSettingsFormSubmit();
 
   const form = useAppForm({
-    ...formOpts,
-    defaultValues: configData ?? formOpts.defaultValues,
+    defaultValues: (configData ??
+      defaultDownloadClientFormValues) as ClientFormData,
     onSubmit: handleSubmit,
     validators: {
       onSubmit: downloaderValidationSchema,

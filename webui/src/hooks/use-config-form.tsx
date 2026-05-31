@@ -20,7 +20,10 @@ export const useConfigForm = (schema: ZodObject<ZodRawShape>) => {
       console.warn(`Field "${field}" not found in schema.`);
       return false;
     }
-    return !(schemaField as ZodTypeAny).isOptional() && !(schemaField as ZodTypeAny).isNullable();
+    return (
+      !(schemaField as ZodTypeAny).isOptional() &&
+      !(schemaField as ZodTypeAny).isNullable()
+    );
   };
 
   return {

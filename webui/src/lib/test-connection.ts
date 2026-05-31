@@ -1,5 +1,15 @@
 import { trpcClient } from './trpc';
 
+type DownloadClientKind =
+  | 'qbittorrent'
+  | 'rtorrent'
+  | 'transmission'
+  | 'deluge';
+
+function isDownloadClientKind(value: string): value is DownloadClientKind {
+  return ['qbittorrent', 'rtorrent', 'transmission', 'deluge'].includes(value);
+}
+
 export const testConnection = async ({
   client,
   url,
@@ -12,8 +22,13 @@ export const testConnection = async ({
   password: string;
 }): Promise<{ success: boolean }> => {
   try {
+    const normalizedClient = client.toLowerCase();
+    if (!isDownloadClientKind(normalizedClient)) {
+      return { success: false };
+    }
+
     const result = await trpcClient.clients.testConnection.mutate({
-      client: client.toLowerCase(),
+      client: normalizedClient,
       url,
       username,
       password,

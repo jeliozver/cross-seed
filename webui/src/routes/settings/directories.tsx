@@ -30,7 +30,7 @@ function DirectorySettings() {
     trpc.settings.get.queryOptions(undefined, {
       select: (data: {
         config: RuntimeConfig;
-        apikey: string;
+        apiKey: string;
       }): Partial<DirectoryFormData> => {
         const fullDataset = formatConfigDataForForm(data.config);
         const filteredData = pickSchemaFields(

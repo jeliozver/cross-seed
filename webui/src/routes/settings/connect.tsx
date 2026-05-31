@@ -21,7 +21,11 @@ import { FormValidationProvider } from '@/contexts/Form/form-validation-provider
 import { pickSchemaFields } from '@/lib/pick-schema-fields';
 import { Page } from '@/components/Page';
 import { useSettingsFormSubmit } from '@/hooks/use-settings-form-submit';
-import { RuntimeConfig, WebhookEntry } from '@cross-seed/shared/configSchema';
+import {
+  RuntimeConfig,
+  WebhookEntry,
+  WebhookObjectSchema,
+} from '@cross-seed/shared/configSchema';
 
 type ConnectFormData = z.infer<typeof connectValidationSchema>;
 
@@ -32,29 +36,43 @@ type WebhookFormEntry = {
   advancedOpen: boolean;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const isStringRecord = (value: unknown): value is Record<string, string> =>
+  isRecord(value) &&
+  Object.values(value).every((entry) => typeof entry === 'string');
+
 function transformWebhooksForApi(entries: WebhookFormEntry[]): WebhookEntry[] {
   return entries
     .filter((e) => e.url !== '')
     .map((e) => {
       if (!e.payload && !e.headers) return e.url;
-      const obj: { url: string; payload?: unknown; headers?: unknown } = {
+      const obj: WebhookEntry = {
         url: e.url,
       };
       if (e.payload) {
         try {
-          obj.payload = JSON.parse(e.payload);
+          const payload = JSON.parse(e.payload) as unknown;
+          if (isRecord(payload)) {
+            obj.payload = payload;
+          }
         } catch {
           /* invalid JSON, omit */
         }
       }
       if (e.headers) {
         try {
-          obj.headers = JSON.parse(e.headers);
+          const headers = JSON.parse(e.headers) as unknown;
+          if (isStringRecord(headers)) {
+            obj.headers = headers;
+          }
         } catch {
           /* invalid JSON, omit */
         }
       }
-      return obj;
+      const parsed = WebhookObjectSchema.safeParse(obj);
+      return parsed.success ? parsed.data : e.url;
     });
 }
 

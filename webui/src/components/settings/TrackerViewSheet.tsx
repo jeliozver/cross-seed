@@ -15,6 +15,7 @@ import {
 import { toast } from 'sonner';
 import { TestTube, Loader2, Pencil } from 'lucide-react';
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 
 // ! FIXME: consolidate this type in a types.ts file and import it
 // Same as the one in trackers.tsx (probably)
@@ -49,7 +50,7 @@ function ExternalIdBadges({
     ...(movieIdCaps ? Object.keys(movieIdCaps) : []),
   ]);
 
-  const badges = [];
+  const badges: ReactNode[] = [];
 
   // Non-parenthesized (both TV and Movies) first
   allProviders.forEach((provider) => {

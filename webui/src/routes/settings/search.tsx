@@ -23,7 +23,7 @@ function SearchRssSettings() {
     trpc.settings.get.queryOptions(undefined, {
       select: (data: {
         config: RuntimeConfig;
-        apikey: string;
+        apiKey: string;
       }): Partial<SearchFormData> => {
         const fullDataset = formatConfigDataForForm(data.config);
         const filteredData = pickSchemaFields(

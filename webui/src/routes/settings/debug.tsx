@@ -90,7 +90,7 @@ function DebugSettings() {
     }
 
     try {
-      const parsedConfig = JSON.parse(jsonValue) as unknown;
+      const parsedConfig = JSON.parse(jsonValue) as Record<string, unknown>;
       saveMutation.mutate(parsedConfig);
     } catch {
       toast.error('Failed to parse JSON');

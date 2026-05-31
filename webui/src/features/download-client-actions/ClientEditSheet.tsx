@@ -19,10 +19,7 @@ import { clientValidationSchema } from '@/types/config';
 import { useSaveConfigHook } from '@/hooks/saveFormHook';
 import useConfigForm from '@/hooks/use-config-form';
 import { FormValidationProvider } from '@/contexts/Form/form-validation-provider';
-import {
-  buildClientUrl,
-  buildClientTestUrl,
-} from './lib/urls';
+import { buildClientUrl, buildClientTestUrl } from './lib/urls';
 import { TDownloadClient } from '@/types/download-clients';
 import { testConnection } from '@/lib/test-connection';
 // import { Label as Labels } from '../../../../../src/logger';
@@ -113,8 +110,12 @@ export default function ClientEditSheet({
     setIsTesting(true);
     const client = String(form.getFieldValue('client'));
     const url = String(form.getFieldValue('url'));
-    const username = String((form.getFieldValue('user') as string | undefined) ?? '');
-    const password = String((form.getFieldValue('password') as string | undefined) ?? '');
+    const username = String(
+      (form.getFieldValue('user') as string | undefined) ?? '',
+    );
+    const password = String(
+      (form.getFieldValue('password') as string | undefined) ?? '',
+    );
 
     const testUrl = buildClientTestUrl({
       client,
@@ -202,13 +203,15 @@ export default function ClientEditSheet({
 
               <form.Subscribe
                 selector={(state) => ({
-                  urlValue: state.values.url as string | undefined,
+                  urlValue: (state.values as Partial<TDownloadClient>).url,
                   urlMeta: state.fieldMeta.url,
-                  userValue: state.values.user as string | undefined,
+                  userValue: (state.values as Partial<TDownloadClient>).user,
                   userMeta: state.fieldMeta.user,
-                  passwordValue: state.values.password as string | undefined,
+                  passwordValue: (state.values as Partial<TDownloadClient>)
+                    .password,
                   passwordMeta: state.fieldMeta.password,
-                  clientValue: state.values.client as string | undefined,
+                  clientValue: (state.values as Partial<TDownloadClient>)
+                    .client,
                 })}
               >
                 {({
@@ -238,7 +241,9 @@ export default function ClientEditSheet({
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => { void handleTest(); }}
+                        onClick={() => {
+                          void handleTest();
+                        }}
                         disabled={!canTest}
                         className="w-full"
                       >

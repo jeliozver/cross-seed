@@ -74,7 +74,7 @@ export default function ClientViewSheet({
         </div>
 
         <SheetFooter>
-          {onEdit && (
+          {onEdit && client && (
             <Button
               type="button"
               onClick={() => onEdit(client)}

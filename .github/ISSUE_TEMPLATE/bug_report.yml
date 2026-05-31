@@ -21,7 +21,9 @@ body:
     - type: textarea
       attributes:
           label: Version and environment
-          description: Share what you know. Exact versions help, but rough details are fine.
+          description:
+              Share what you know. Exact versions help, but rough details are
+              fine.
           value: |
               - cross-seed:
               - OS:

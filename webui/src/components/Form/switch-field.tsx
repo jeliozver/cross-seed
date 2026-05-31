@@ -18,7 +18,7 @@ const SwitchField: FC<SwitchFieldProps> = ({ className, label }) => {
       </Label>
       <Switch
         id={field.name}
-        checked={field.state.value}
+        checked={field.state.value === true}
         onCheckedChange={field.handleChange}
       />
     </div>

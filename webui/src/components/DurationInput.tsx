@@ -32,7 +32,7 @@ export type DurationInputProps = {
   value: number | null | undefined;
   onChange: (value: number | null) => void;
   onBlur?: () => void;
-  units?: DurationUnit[];
+  units?: readonly DurationUnit[];
   disabled?: boolean;
 };
 
@@ -131,7 +131,7 @@ export function DurationInput({
         <SelectContent>
           {unitList.map((unit) => (
             <SelectItem key={unit.value} value={unit.value}>
-              {unit.labelPlural ?? `${unit.label}s`}
+              {unit.labelPlural}
             </SelectItem>
           ))}
         </SelectContent>
@@ -198,7 +198,7 @@ function normalizeDurationValue(
 
 function getUnitLabel(unit: DurationUnit, quantity: number | null) {
   if (quantity == null || quantity !== 1) {
-    return unit.labelPlural ?? `${unit.label}s`;
+    return unit.labelPlural;
   }
 
   return unit.label;
