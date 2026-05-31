@@ -16,6 +16,7 @@
 		"build": "npm -w cross-seed run build:all",
 		"build:sea": "npm run build && node scripts/build-sea.js",
 		"build:api-types": "npm -w api-types run build",
+		"build:types": "tsc -b cross-seed/tsconfig.json api-types/tsconfig.json --force",
 		"build:webui": "npm -w webui run build",
 		"build:all": "npm run build",
 		"watch": "npm -w cross-seed run watch",
