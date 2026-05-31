@@ -1,9 +1,9 @@
-import * as esbuild from "esbuild";
 import { spawn } from "node:child_process";
 import { chmod, cp, mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, extname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { build as viteBuild } from "vite";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const seaDir = join(repoRoot, "sea");
@@ -150,6 +150,42 @@ async function buildTarget(target, bundlePath, assets) {
 	console.log(`Built ${outputPath}`);
 }
 
+async function buildBundle(bundlePath) {
+	await viteBuild({
+		configFile: false,
+		root: repoRoot,
+		publicDir: false,
+		logLevel: "warn",
+		build: {
+			emptyOutDir: false,
+			minify: false,
+			outDir: seaDir,
+			ssr: join(repoRoot, "cross-seed/dist/cmd.js"),
+			target: "node26",
+			rollupOptions: {
+				external: [
+					"better-sqlite3",
+					"mysql",
+					"mysql2",
+					"oracledb",
+					"pg",
+					"pg-query-stream",
+					"sqlite3",
+					"tedious",
+				],
+				output: {
+					banner: 'import { createRequire as __crossSeedCreateRequire } from "node:module";\nconst require = __crossSeedCreateRequire(import.meta.url);',
+					entryFileNames: basename(bundlePath),
+					format: "es",
+				},
+			},
+		},
+		ssr: {
+			noExternal: true,
+		},
+	});
+}
+
 async function main() {
 	if (targets.length === 0) {
 		throw new Error("SEA_TARGETS did not match any known targets");
@@ -159,27 +195,7 @@ async function main() {
 	await mkdir(seaDir, { recursive: true });
 
 	const bundlePath = join(seaDir, "bundle.mjs");
-	await esbuild.build({
-		entryPoints: [join(repoRoot, "cross-seed/dist/cmd.js")],
-		bundle: true,
-		platform: "node",
-		format: "esm",
-		target: "node26",
-		outfile: bundlePath,
-		banner: {
-			js: 'import { createRequire as __crossSeedCreateRequire } from "node:module";\nconst require = __crossSeedCreateRequire(import.meta.url);',
-		},
-		external: [
-			"better-sqlite3",
-			"mysql",
-			"mysql2",
-			"oracledb",
-			"pg",
-			"pg-query-stream",
-			"sqlite3",
-			"tedious",
-		],
-	});
+	await buildBundle(bundlePath);
 
 	const assets = await createWebuiAssets();
 	for (const target of targets) {
