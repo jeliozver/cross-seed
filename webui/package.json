@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "prelint": "npm -C .. run build:types",
+    "generate:routes": "node ../scripts/generate-route-tree.js",
+    "prelint": "npm run generate:routes && npm -C .. run build:types",
     "lint": "eslint .",
     "preview": "vite preview"
   },
