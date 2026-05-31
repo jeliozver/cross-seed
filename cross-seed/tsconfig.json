@@ -1,7 +1,5 @@
 {
 	"compilerOptions": {
-		"outDir": "./dist",
-		"rootDir": "./src",
 		"allowJs": true,
 		"target": "es2022",
 		"lib": ["es2023"],
@@ -11,14 +9,16 @@
 		"resolveJsonModule": true,
 		"sourceMap": true,
 		"strictNullChecks": true,
-		"types": [],
+		"types": ["node"],
 		"composite": true,
+		"noEmit": true,
+		"rootDir": ".",
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
 		"baseUrl": ".",
 		"paths": {
 			"@cross-seed/shared/*": ["../shared/src/*"],
 			"@cross-seed/api-types": ["../api-types/dist/index.d.ts"]
 		}
 	},
-	"include": ["./src/**/*", "./package.json"],
-	"references": [{ "path": "../shared/tsconfig.json" }]
+	"include": ["./src/**/*", "./tests/**/*", "./package.json"]
 }

@@ -15,7 +15,7 @@ export default tseslint.config(
 			ecmaVersion: 2022,
 			globals: globals.node,
 			parserOptions: {
-				project: "./tsconfig.eslint.json",
+				projectService: true,
 				tsconfigRootDir: import.meta.dirname,
 			},
 			sourceType: "module",

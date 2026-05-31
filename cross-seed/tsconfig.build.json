@@ -1,0 +1,17 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"noEmit": false,
+		"tsBuildInfoFile": "./tsconfig.tsbuildinfo"
+	},
+	"include": ["./src/**/*", "./package.json"],
+	"exclude": [
+		"./src/**/*.test.ts",
+		"./src/**/*.spec.ts",
+		"./src/**/__tests__/**",
+		"./src/**/test-support/**"
+	],
+	"references": [{ "path": "../shared/tsconfig.build.json" }]
+}

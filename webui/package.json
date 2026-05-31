@@ -4,11 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "coverage": "vitest run --coverage",
     "dev": "vite",
     "build": "vite build",
     "generate:routes": "node ../scripts/generate-route-tree.js",
     "prelint": "npm run generate:routes && npm -C .. run build:types",
     "lint": "eslint .",
+    "test": "vitest",
     "typecheck": "tsc -b",
     "preview": "vite preview"
   },

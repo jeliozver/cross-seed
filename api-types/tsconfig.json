@@ -21,6 +21,6 @@
 			"@cross-seed/backend/*": ["../cross-seed/dist/*"]
 		}
 	},
-	"references": [{ "path": "../cross-seed/tsconfig.json" }],
+	"references": [{ "path": "../cross-seed/tsconfig.build.json" }],
 	"include": ["./src/**/*"]
 }
