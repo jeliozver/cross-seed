@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useMemo } from 'react';
-import { useTRPC } from '@/lib/trpc';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { StatCard } from '@/components/ui/stat-card';
-import { Page } from '@/components/Page';
+import { createFileRoute } from "@tanstack/react-router";
+import { useMemo } from "react";
+import { useTRPC } from "@/lib/trpc";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { StatCard } from "@/components/ui/stat-card";
+import { Page } from "@/components/Page";
 
 function Home() {
   const trpc = useTRPC();
@@ -16,23 +16,23 @@ function Home() {
   );
   const showMatchesPerQuery = showDistinctQueryCount;
   const topGridCols = showDistinctQueryCount
-    ? 'lg:grid-cols-5'
-    : 'lg:grid-cols-4';
+    ? "lg:grid-cols-5"
+    : "lg:grid-cols-4";
   const conversionGridCols = showMatchesPerQuery
-    ? 'lg:grid-cols-4'
-    : 'lg:grid-cols-3';
+    ? "lg:grid-cols-4"
+    : "lg:grid-cols-3";
   const indexerHealthTitle = statsData.allIndexersHealthy
-    ? 'Indexer Health'
-    : 'Unhealthy Indexers';
+    ? "Indexer Health"
+    : "Unhealthy Indexers";
   const indexerHealthValue = statsData.allIndexersHealthy
     ? `All ${statsData.totalIndexers.toLocaleString()}`
     : statsData.unhealthyIndexers.toLocaleString();
   const indexerHealthDescription = statsData.allIndexersHealthy
-    ? 'Indexers are all reporting healthy'
+    ? "Indexers are all reporting healthy"
     : `${statsData.unhealthyIndexers.toLocaleString()} of ${statsData.totalIndexers.toLocaleString()} indexers need attention`;
 
   return (
-    <Page breadcrumbs={['Dashboard']}>
+    <Page breadcrumbs={["Dashboard"]}>
       <div className="main space-y-8">
         <section className="space-y-4">
           <div className={`grid gap-4 md:grid-cols-2 ${topGridCols}`}>
@@ -106,6 +106,6 @@ function Home() {
   );
 }
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: Home,
 });

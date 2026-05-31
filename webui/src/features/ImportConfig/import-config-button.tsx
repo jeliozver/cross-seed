@@ -1,15 +1,15 @@
-import { FC, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { FC, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import ImportConfigAlert from './import-config-alert';
-import { useImportConfig } from '@/hooks/use-import-config';
-import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
-import { toast } from 'sonner';
+} from "@/components/ui/alert-dialog";
+import ImportConfigAlert from "./import-config-alert";
+import { useImportConfig } from "@/hooks/use-import-config";
+import { useQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
+import { toast } from "sonner";
 
 const ImportConfigButton: FC = () => {
   const [open, setOpen] = useState(false);
@@ -25,15 +25,15 @@ const ImportConfigButton: FC = () => {
   const handleStartImport = () => {
     // Logic to handle import configuration
     if (!settingsData) {
-      toast.error('No settings data available for import.');
+      toast.error("No settings data available for import.");
       return;
     }
 
     try {
-      console.log('the data', settingsData);
+      console.log("the data", settingsData);
       importConfig(settingsData, {
         onSuccess: () => {
-          toast.success('Configuration imported successfully!');
+          toast.success("Configuration imported successfully!");
         },
         onError: (error) => {
           toast.error(`Failed to import configuration: ${error.message}`);

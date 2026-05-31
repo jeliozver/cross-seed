@@ -1,11 +1,11 @@
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import { Suspense } from 'react';
-import { Login } from '@/components/auth/AuthWrapper';
-import { AppSidebar } from '@/components/app-sidebar';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { Suspense } from "react";
+import { Login } from "@/components/auth/AuthWrapper";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 // nothing in  router context right now
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -14,8 +14,8 @@ interface RouterContext {}
 function getIsDevtoolsEnabled(): boolean {
   try {
     if (
-      process.env.NODE_ENV === 'production' ||
-      window.localStorage.getItem('DISABLE_DEVTOOLS') === 'true'
+      process.env.NODE_ENV === "production" ||
+      window.localStorage.getItem("DISABLE_DEVTOOLS") === "true"
     ) {
       return false;
     }
@@ -37,8 +37,8 @@ function RootRoute() {
             defaultOpen={true}
             style={
               {
-                '--sidebar-width': 'calc(var(--spacing) * 48)',
-                '--header-height': 'calc(var(--spacing) * 12)',
+                "--sidebar-width": "calc(var(--spacing) * 48)",
+                "--header-height": "calc(var(--spacing) * 12)",
               } as React.CSSProperties
             }
           >

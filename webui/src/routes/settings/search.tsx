@@ -1,18 +1,18 @@
-import { MatchMode } from '@cross-seed/shared/constants';
-import { defaultSearchFormValues } from '../../components/Form/shared-form';
-import { useAppForm } from '@/hooks/form';
-import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
-import { formatConfigDataForForm } from '@/lib/formatConfigData';
-import { searchValidationSchema } from '@/types/config';
-import useConfigForm from '@/hooks/use-config-form';
-import { FormValidationProvider } from '@/contexts/Form/form-validation-provider';
-import { pickSchemaFields } from '@/lib/pick-schema-fields';
-import { createFileRoute } from '@tanstack/react-router';
-import { Page } from '@/components/Page';
-import { useSettingsFormSubmit } from '@/hooks/use-settings-form-submit';
-import { RuntimeConfig } from '@cross-seed/shared/configSchema';
-import z from 'zod';
+import { MatchMode } from "@cross-seed/shared/constants";
+import { defaultSearchFormValues } from "../../components/Form/shared-form";
+import { useAppForm } from "@/hooks/form";
+import { useQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
+import { formatConfigDataForForm } from "@/lib/formatConfigData";
+import { searchValidationSchema } from "@/types/config";
+import useConfigForm from "@/hooks/use-config-form";
+import { FormValidationProvider } from "@/contexts/Form/form-validation-provider";
+import { pickSchemaFields } from "@/lib/pick-schema-fields";
+import { createFileRoute } from "@tanstack/react-router";
+import { Page } from "@/components/Page";
+import { useSettingsFormSubmit } from "@/hooks/use-settings-form-submit";
+import { RuntimeConfig } from "@cross-seed/shared/configSchema";
+import z from "zod";
 
 type SearchFormData = z.infer<typeof searchValidationSchema>;
 
@@ -111,6 +111,6 @@ function SearchRssSettings() {
   );
 }
 
-export const Route = createFileRoute('/settings/search')({
+export const Route = createFileRoute("/settings/search")({
   component: SearchRssSettings,
 });

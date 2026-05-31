@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 interface StatCardProps {
   title: string;
@@ -21,7 +21,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'bg-card text-card-foreground rounded-lg border p-6 shadow-sm',
+        "bg-card text-card-foreground rounded-lg border p-6 shadow-sm",
         className,
       )}
     >
@@ -34,13 +34,13 @@ export function StatCard({
           <div className="text-muted-foreground text-xs">
             <span
               className={cn(
-                'font-medium',
-                trend.value > 0 ? 'text-green-600' : 'text-red-600',
+                "font-medium",
+                trend.value > 0 ? "text-green-600" : "text-red-600",
               )}
             >
-              {trend.value > 0 ? '+' : ''}
+              {trend.value > 0 ? "+" : ""}
               {trend.value}
-            </span>{' '}
+            </span>{" "}
             {trend.label}
           </div>
         )}

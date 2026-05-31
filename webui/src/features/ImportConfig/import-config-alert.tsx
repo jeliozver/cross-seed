@@ -5,8 +5,8 @@ import {
   AlertDialogCancel,
   AlertDialogDescription,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { useImportConfig } from '@/hooks/use-import-config';
+} from "@/components/ui/alert-dialog";
+import { useImportConfig } from "@/hooks/use-import-config";
 
 interface ImportConfigAlertProps {
   onConfirm: () => void;
@@ -23,7 +23,7 @@ export default function ImportConfigAlert({
       </AlertDialogHeader>
       <AlertDialogDescription asChild>
         <p>
-          This will import your configuration from the <code>config.js</code>{' '}
+          This will import your configuration from the <code>config.js</code>{" "}
           file. Make sure to backup your current configuration before
           proceeding.
         </p>
@@ -31,7 +31,7 @@ export default function ImportConfigAlert({
       <AlertDialogFooter>
         <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
         <AlertDialogAction disabled={isLoading} onClick={onConfirm}>
-          {isLoading ? 'Importing...' : 'Import'}
+          {isLoading ? "Importing..." : "Import"}
         </AlertDialogAction>
       </AlertDialogFooter>
     </>

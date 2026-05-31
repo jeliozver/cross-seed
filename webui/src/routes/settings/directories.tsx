@@ -1,24 +1,24 @@
-import { LinkType } from '@cross-seed/shared/constants';
-import { z } from 'zod';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { FieldInfo } from '@/components/Form/FieldInfo';
-import { useState, useEffect } from 'react';
-import useConfigForm from '@/hooks/use-config-form';
-import { defaultDirectoriesFormValues } from '../../components/Form/shared-form';
-import DeleteOption from '@/components/Buttons/DeleteOption';
-import { useAppForm } from '@/hooks/form';
-import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
-import { formatConfigDataForForm } from '@/lib/formatConfigData';
-import { directoryValidationSchema } from '@/types/config';
-import { FormValidationProvider } from '@/contexts/Form/form-validation-provider';
-import { pickSchemaFields } from '@/lib/pick-schema-fields';
-import { createFileRoute } from '@tanstack/react-router';
-import { Page } from '@/components/Page';
-import { useSettingsFormSubmit } from '@/hooks/use-settings-form-submit';
-import { RuntimeConfig } from '@cross-seed/shared/configSchema';
+import { LinkType } from "@cross-seed/shared/constants";
+import { z } from "zod";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FieldInfo } from "@/components/Form/FieldInfo";
+import { useState, useEffect } from "react";
+import useConfigForm from "@/hooks/use-config-form";
+import { defaultDirectoriesFormValues } from "../../components/Form/shared-form";
+import DeleteOption from "@/components/Buttons/DeleteOption";
+import { useAppForm } from "@/hooks/form";
+import { useQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
+import { formatConfigDataForForm } from "@/lib/formatConfigData";
+import { directoryValidationSchema } from "@/types/config";
+import { FormValidationProvider } from "@/contexts/Form/form-validation-provider";
+import { pickSchemaFields } from "@/lib/pick-schema-fields";
+import { createFileRoute } from "@tanstack/react-router";
+import { Page } from "@/components/Page";
+import { useSettingsFormSubmit } from "@/hooks/use-settings-form-submit";
+import { RuntimeConfig } from "@cross-seed/shared/configSchema";
 
 type DirectoryFormData = z.infer<typeof directoryValidationSchema>;
 
@@ -150,7 +150,7 @@ function DirectorySettings() {
                           variant="secondary"
                           type="button"
                           onClick={() => {
-                            field.pushValue('');
+                            field.pushValue("");
                             setLastFieldAdded(
                               `${field.name}-${field.state.value.length - 1}`,
                             );
@@ -235,7 +235,7 @@ function DirectorySettings() {
                             variant="secondary"
                             type="button"
                             onClick={() => {
-                              field.pushValue('');
+                              field.pushValue("");
                               const newFieldId = `${field.name}-${field.state.value?.length ? field.state.value.length - 1 : 0}`;
                               setLastFieldAdded(newFieldId);
                             }}
@@ -265,6 +265,6 @@ function DirectorySettings() {
   );
 }
 
-export const Route = createFileRoute('/settings/directories')({
+export const Route = createFileRoute("/settings/directories")({
   component: DirectorySettings,
 });

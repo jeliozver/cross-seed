@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
+import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
 import {
   Table,
   TableBody,
@@ -9,17 +9,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Page } from '@/components/Page';
-import { formatRelativeTime } from '@/lib/time';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+} from "@/components/ui/table";
+import { Page } from "@/components/Page";
+import { formatRelativeTime } from "@/lib/time";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   ChevronLeft,
   ChevronRight,
@@ -28,14 +28,14 @@ import {
   Loader2,
   Search,
   ChevronDown,
-} from 'lucide-react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { toast } from "sonner";
 
-export const Route = createFileRoute('/library')({
+export const Route = createFileRoute("/library")({
   component: LibraryPage,
 });
 
-function toBoolean(value: boolean | 'indeterminate'): boolean {
+function toBoolean(value: boolean | "indeterminate"): boolean {
   return value === true;
 }
 
@@ -143,24 +143,24 @@ function LibraryPage() {
       onSuccess: (result) => {
         const { attempted, totalFound, skipped } = result;
         if (attempted === 0) {
-          toast.info('No eligible items to search', {
+          toast.info("No eligible items to search", {
             description:
               skipped > 0
-                ? `${skipped} item${skipped === 1 ? '' : 's'} were skipped by filters.`
+                ? `${skipped} item${skipped === 1 ? "" : "s"} were skipped by filters.`
                 : undefined,
           });
         } else {
-          toast.success('Bulk search complete', {
-            description: `${attempted} item${attempted === 1 ? '' : 's'} searched${
-              skipped ? ` (${skipped} skipped)` : ''
-            }. Found ${totalFound} match${totalFound === 1 ? '' : 'es'}.`,
+          toast.success("Bulk search complete", {
+            description: `${attempted} item${attempted === 1 ? "" : "s"} searched${
+              skipped ? ` (${skipped} skipped)` : ""
+            }. Found ${totalFound} match${totalFound === 1 ? "" : "es"}.`,
           });
         }
         clearSelection();
         void query.refetch();
       },
       onError: (error) => {
-        toast.error('Bulk search failed', {
+        toast.error("Bulk search failed", {
           description: error.message,
         });
       },
@@ -185,7 +185,7 @@ function LibraryPage() {
   };
 
   const formatTimestamp = (value: string | null) =>
-    value ? formatRelativeTime(value) : 'Never';
+    value ? formatRelativeTime(value) : "Never";
 
   return (
     <Page>
@@ -200,8 +200,8 @@ function LibraryPage() {
           <div className="flex items-center gap-2">
             <span>
               {selectedCount > 0
-                ? `${selectedCount} item${selectedCount === 1 ? '' : 's'} selected`
-                : 'No items selected'}
+                ? `${selectedCount} item${selectedCount === 1 ? "" : "s"} selected`
+                : "No items selected"}
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -309,7 +309,7 @@ function LibraryPage() {
                     allSelectedOnPage
                       ? true
                       : someSelectedOnPage
-                        ? 'indeterminate'
+                        ? "indeterminate"
                         : false
                   }
                   onCheckedChange={(value) => toggleSelectAll(toBoolean(value))}
@@ -384,8 +384,8 @@ function LibraryPage() {
                 return (
                   <TableRow
                     key={itemId}
-                    data-state={isSelected ? 'selected' : undefined}
-                    className={isSelected ? 'bg-muted/60' : undefined}
+                    data-state={isSelected ? "selected" : undefined}
+                    className={isSelected ? "bg-muted/60" : undefined}
                   >
                     <TableCell>
                       <Checkbox

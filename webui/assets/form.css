@@ -1,14 +1,14 @@
 .form-fieldset {
   display: grid;
-  grid-template-areas: 'col1 col2';
+  grid-template-areas: "col1 col2";
   grid-template-columns: repeat(2, 1fr);
-  padding-block: theme('spacing.4');
-  margin-block-end: theme('spacing.5');
+  padding-block: theme("spacing.4");
+  margin-block-end: theme("spacing.5");
 
   legend {
-    font-size: theme('fontSize.lg');
-    font-weight: theme('fontWeight.semibold');
-    padding-inline: theme('spacing.3');
+    font-size: theme("fontSize.lg");
+    font-weight: theme("fontWeight.semibold");
+    padding-inline: theme("spacing.3");
   }
 }
 
@@ -26,16 +26,16 @@
   grid-column: span 2;
 
   & .form-field__switch {
-    width: theme('width.1/6');
+    width: theme("width.1/6");
   }
 }
 
 .form-input {
-  padding-block: theme('spacing.1');
-  padding-inline: theme('spacing.2');
+  padding-block: theme("spacing.1");
+  padding-inline: theme("spacing.2");
   box-shadow: none;
 
-  &[aria-invalid='true'] {
+  &[aria-invalid="true"] {
     border-color: var(--color-destructive);
     box-shadow: 0 0 0 2px
       color-mix(in oklab, var(--color-destructive) 40%, transparent);

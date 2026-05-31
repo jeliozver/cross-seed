@@ -1,31 +1,31 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { Loader2, TestTube } from 'lucide-react';
-import { FieldInfo } from '@/components/Form/FieldInfo';
-import { z } from 'zod';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import DeleteOption from '@/components/Buttons/DeleteOption';
-import useConfigForm from '@/hooks/use-config-form';
-import { defaultConnectFormValues } from '@/components/Form/shared-form';
-import { useAppForm } from '@/hooks/form';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
-import { formatConfigDataForForm } from '@/lib/formatConfigData';
-import { connectValidationSchema } from '@/types/config';
-import { FormValidationProvider } from '@/contexts/Form/form-validation-provider';
-import { pickSchemaFields } from '@/lib/pick-schema-fields';
-import { Page } from '@/components/Page';
-import { useSettingsFormSubmit } from '@/hooks/use-settings-form-submit';
+import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Loader2, TestTube } from "lucide-react";
+import { FieldInfo } from "@/components/Form/FieldInfo";
+import { z } from "zod";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import DeleteOption from "@/components/Buttons/DeleteOption";
+import useConfigForm from "@/hooks/use-config-form";
+import { defaultConnectFormValues } from "@/components/Form/shared-form";
+import { useAppForm } from "@/hooks/form";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
+import { formatConfigDataForForm } from "@/lib/formatConfigData";
+import { connectValidationSchema } from "@/types/config";
+import { FormValidationProvider } from "@/contexts/Form/form-validation-provider";
+import { pickSchemaFields } from "@/lib/pick-schema-fields";
+import { Page } from "@/components/Page";
+import { useSettingsFormSubmit } from "@/hooks/use-settings-form-submit";
 import {
   RuntimeConfig,
   WebhookEntry,
   WebhookObjectSchema,
-} from '@cross-seed/shared/configSchema';
+} from "@cross-seed/shared/configSchema";
 
 type ConnectFormData = z.infer<typeof connectValidationSchema>;
 
@@ -37,15 +37,15 @@ type WebhookFormEntry = {
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 const isStringRecord = (value: unknown): value is Record<string, string> =>
   isRecord(value) &&
-  Object.values(value).every((entry) => typeof entry === 'string');
+  Object.values(value).every((entry) => typeof entry === "string");
 
 function transformWebhooksForApi(entries: WebhookFormEntry[]): WebhookEntry[] {
   return entries
-    .filter((e) => e.url !== '')
+    .filter((e) => e.url !== "")
     .map((e) => {
       if (!e.payload && !e.headers) return e.url;
       const obj: WebhookEntry = {
@@ -123,7 +123,7 @@ function ConnectSettings() {
       onSuccess: (data) => {
         const results = data.results;
         const failures = results.filter((r) => !r.ok);
-        const plural = results.length === 1 ? '' : 's';
+        const plural = results.length === 1 ? "" : "s";
         if (failures.length === 0) {
           toast.success(
             `All ${results.length} webhook${plural} sent successfully!`,
@@ -131,9 +131,9 @@ function ConnectSettings() {
         } else {
           const detail = failures
             .map(
-              (r) => `${r.url.replace(/:\/\/[^@/]*@/, '://***@')} — ${r.error}`,
+              (r) => `${r.url.replace(/:\/\/[^@/]*@/, "://***@")} — ${r.error}`,
             )
-            .join('\n');
+            .join("\n");
           toast.error(
             `${failures.length} of ${results.length} webhook${plural} failed:\n${detail}`,
           );
@@ -218,7 +218,7 @@ function ConnectSettings() {
                                         onBlur: z
                                           .string()
                                           .url()
-                                          .or(z.literal('')),
+                                          .or(z.literal("")),
                                       }}
                                     >
                                       {(subfield) => (
@@ -253,7 +253,7 @@ function ConnectSettings() {
                             variant="secondary"
                             type="button"
                             onClick={() => {
-                              field.pushValue('');
+                              field.pushValue("");
                               const newFieldId = `${field.name}-${field.state.value?.length ? field.state.value.length - 1 : 0}`;
                               setLastFieldAdded(newFieldId);
                             }}
@@ -291,7 +291,7 @@ function ConnectSettings() {
                                         onBlur: z
                                           .string()
                                           .url()
-                                          .or(z.literal('')),
+                                          .or(z.literal("")),
                                       }}
                                     >
                                       {(subfield) => (
@@ -326,7 +326,7 @@ function ConnectSettings() {
                             variant="secondary"
                             type="button"
                             onClick={() => {
-                              field.pushValue('');
+                              field.pushValue("");
                               const newFieldId = `${field.name}-${field.state.value?.length ? field.state.value.length - 1 : 0}`;
                               setLastFieldAdded(newFieldId);
                             }}
@@ -367,7 +367,7 @@ function ConnectSettings() {
                                       onBlur: z
                                         .string()
                                         .url()
-                                        .or(z.literal('')),
+                                        .or(z.literal("")),
                                     }}
                                   >
                                     {(subfield) => (
@@ -520,9 +520,9 @@ function ConnectSettings() {
                               type="button"
                               onClick={() => {
                                 field.pushValue({
-                                  url: '',
-                                  payload: '',
-                                  headers: '',
+                                  url: "",
+                                  payload: "",
+                                  headers: "",
                                   advancedOpen: false,
                                 });
                                 setLastFieldAdded(
@@ -556,14 +556,14 @@ function ConnectSettings() {
                                 );
                                 if (hasInvalidJson) {
                                   toast.error(
-                                    'Fix invalid headers/payload JSON before testing.',
+                                    "Fix invalid headers/payload JSON before testing.",
                                   );
                                   return;
                                 }
                                 const webhooks =
                                   transformWebhooksForApi(entries);
                                 if (webhooks.length === 0) {
-                                  toast.error('No webhooks to test.');
+                                  toast.error("No webhooks to test.");
                                   return;
                                 }
                                 testWebhooks({ webhooks });
@@ -600,6 +600,6 @@ function ConnectSettings() {
   );
 }
 
-export const Route = createFileRoute('/settings/connect')({
+export const Route = createFileRoute("/settings/connect")({
   component: ConnectSettings,
 });

@@ -1,4 +1,4 @@
-import ImportConfigButton from '@/features/ImportConfig/import-config-button';
+import ImportConfigButton from "@/features/ImportConfig/import-config-button";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;

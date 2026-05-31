@@ -1,16 +1,16 @@
-import { cn } from '@/lib/utils';
-import { useFieldContext } from '@/contexts/Form/form-context';
-import { Label } from '@/components/ui/label';
-import { FieldInfo } from './FieldInfo';
+import { cn } from "@/lib/utils";
+import { useFieldContext } from "@/contexts/Form/form-context";
+import { Label } from "@/components/ui/label";
+import { FieldInfo } from "./FieldInfo";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from '@/components/ui/select';
-import RequiredIndicator from './required-indicator';
-import { useFormValidation } from '@/contexts/Form/use-form-validation-context';
+} from "@/components/ui/select";
+import RequiredIndicator from "./required-indicator";
+import { useFormValidation } from "@/contexts/Form/use-form-validation-context";
 
 type SelectFieldProps<T extends Record<string, string>> = {
   className?: string;
@@ -41,7 +41,7 @@ function SelectField<T extends Record<string, string>>({
   const { isFieldRequired } = useFormValidation();
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn("space-y-3", className)}>
       <Label htmlFor={field.name} className="block w-full">
         {label}
         {isFieldRequired(field.name) && <RequiredIndicator />}

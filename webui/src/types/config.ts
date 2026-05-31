@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import { z } from "zod";
 import {
   Action,
   LinkType,
   ZodErrorMessages,
-} from '@cross-seed/shared/constants';
-import { RUNTIME_CONFIG_SCHEMA } from '@cross-seed/shared/configSchema';
+} from "@cross-seed/shared/constants";
+import { RUNTIME_CONFIG_SCHEMA } from "@cross-seed/shared/configSchema";
 
 const runtimeShape = RUNTIME_CONFIG_SCHEMA.shape;
 
@@ -17,7 +17,7 @@ function parseJsonOrUndefined(val: string): unknown {
 }
 
 const isPlainObject = (v: unknown): v is Record<string, unknown> =>
-  typeof v === 'object' && v !== null && !Array.isArray(v);
+  typeof v === "object" && v !== null && !Array.isArray(v);
 
 // Optional string that, when non-empty, must be a JSON object — used for
 // custom webhook payloads. Rejects arrays/primitives so the error surfaces
@@ -27,7 +27,7 @@ const optionalJsonObjectString = z.string().refine(
     if (!val) return true;
     return isPlainObject(parseJsonOrUndefined(val));
   },
-  { message: 'Must be a valid JSON object' },
+  { message: "Must be a valid JSON object" },
 );
 
 // Optional string that, when non-empty, must be a JSON object whose values
@@ -38,10 +38,10 @@ const optionalJsonHeadersString = z.string().refine(
     const parsed = parseJsonOrUndefined(val);
     return (
       isPlainObject(parsed) &&
-      Object.values(parsed).every((v) => typeof v === 'string')
+      Object.values(parsed).every((v) => typeof v === "string")
     );
   },
-  { message: 'Must be a JSON object with string values' },
+  { message: "Must be a JSON object with string values" },
 );
 
 export const generalValidationSchema = z.object({
@@ -83,7 +83,7 @@ export const downloaderValidationSchema = z.object({
     .string()
     .nullish()
     .transform((value) =>
-      value == null || value.trim() === '' ? null : value,
+      value == null || value.trim() === "" ? null : value,
     ),
   outputDir: z.string().min(1, ZodErrorMessages.emptyString),
   injectDir: z.string().optional(),
@@ -104,11 +104,11 @@ export const connectValidationSchema = z.object({
   host: runtimeShape.host.nullish(),
   port: runtimeShape.port.nullish(),
   apiKey: runtimeShape.apiKey.nullish(),
-  radarr: z.array(z.string().url().or(z.literal(''))).transform((v) => v ?? []),
-  sonarr: z.array(z.string().url().or(z.literal(''))).transform((v) => v ?? []),
+  radarr: z.array(z.string().url().or(z.literal(""))).transform((v) => v ?? []),
+  sonarr: z.array(z.string().url().or(z.literal(""))).transform((v) => v ?? []),
   notificationWebhookUrls: z.array(
     z.object({
-      url: z.string().url().or(z.literal('')),
+      url: z.string().url().or(z.literal("")),
       payload: optionalJsonObjectString,
       headers: optionalJsonHeadersString,
       advancedOpen: z.boolean(),
@@ -120,7 +120,7 @@ export const directoryValidationSchema = z.object({
   dataDirs: z.array(z.string()).transform((v) => v ?? []),
   flatLinking: z
     .boolean()
-    .transform((v) => (typeof v === 'boolean' ? v : false)),
+    .transform((v) => (typeof v === "boolean" ? v : false)),
   linkDir: z.string().nullish(),
   linkDirs: z.array(z.string()),
   linkType: z.nativeEnum(LinkType),

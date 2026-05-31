@@ -1,9 +1,9 @@
-import { useTRPC } from '@/lib/trpc';
-import { createFileRoute } from '@tanstack/react-router';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { useTRPC } from "@/lib/trpc";
+import { createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -11,12 +11,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Play, Check } from 'lucide-react';
-import { formatRelativeTime } from '@/lib/time';
-import { Page } from '@/components/Page';
+} from "@/components/ui/table";
+import { Play, Check } from "lucide-react";
+import { formatRelativeTime } from "@/lib/time";
+import { Page } from "@/components/Page";
 
-export const Route = createFileRoute('/jobs')({
+export const Route = createFileRoute("/jobs")({
   component: RouteComponent,
 });
 
@@ -44,7 +44,7 @@ function RouteComponent() {
         }, 3000);
       },
       onError: (error) => {
-        console.error('Failed to trigger job:', error.message);
+        console.error("Failed to trigger job:", error.message);
       },
     }),
   );
@@ -57,7 +57,7 @@ function RouteComponent() {
         </Badge>
       );
     }
-    if (job.nextExecution === 'now') {
+    if (job.nextExecution === "now") {
       return <Badge variant="secondary">Ready</Badge>;
     }
     return <Badge variant="outline">Scheduled</Badge>;
@@ -67,7 +67,7 @@ function RouteComponent() {
     return name
       .split(/(?=[A-Z])/)
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .join(" ");
   };
 
   return (
@@ -94,11 +94,11 @@ function RouteComponent() {
                 <TableCell>
                   {job.lastExecution
                     ? formatRelativeTime(job.lastExecution)
-                    : 'Never'}
+                    : "Never"}
                 </TableCell>
                 <TableCell>
-                  {job.nextExecution === 'now'
-                    ? 'Now'
+                  {job.nextExecution === "now"
+                    ? "Now"
                     : formatRelativeTime(job.nextExecution)}
                 </TableCell>
                 <TableCell>{getStatusBadge(job)}</TableCell>

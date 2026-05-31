@@ -1,7 +1,7 @@
-import { LoginForm } from '@/components/login-form';
-import { useTRPC } from '@/lib/trpc';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
+import { LoginForm } from "@/components/login-form";
+import { useTRPC } from "@/lib/trpc";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 
 type AuthWrapperProps = {
   children: ReactNode;

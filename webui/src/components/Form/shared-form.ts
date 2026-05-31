@@ -1,7 +1,7 @@
-import { formOptions } from '@tanstack/react-form';
-import { defaultConfig } from '@cross-seed/shared/constants';
-import { RuntimeConfig } from '@cross-seed/shared/configSchema';
-import { Action, LinkType, MatchMode } from '@cross-seed/shared/constants';
+import { formOptions } from "@tanstack/react-form";
+import { defaultConfig } from "@cross-seed/shared/constants";
+import { RuntimeConfig } from "@cross-seed/shared/configSchema";
+import { Action, LinkType, MatchMode } from "@cross-seed/shared/constants";
 
 export const formOpts = formOptions({
   defaultValues: defaultConfig,
@@ -32,7 +32,7 @@ export const defaultDownloadClientFormValues: Partial<RuntimeConfig> = {
   action: Action.INJECT,
   duplicateCategories: false,
   linkCategory: undefined,
-  outputDir: '',
+  outputDir: "",
   skipRecheck: true,
   torrentClients: [],
   torrentDir: undefined,
@@ -62,7 +62,7 @@ export const defaultConnectFormValues: Partial<RuntimeConfig> = {
 export const defaultDirectoriesFormValues: Partial<RuntimeConfig> = {
   dataDirs: [],
   flatLinking: false,
-  injectDir: '',
+  injectDir: "",
   linkDirs: [],
   linkType: LinkType.HARDLINK,
   maxDataDepth: 2,

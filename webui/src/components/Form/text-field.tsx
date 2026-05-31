@@ -1,11 +1,11 @@
-import { FC } from 'react';
-import { cn } from '@/lib/utils';
-import { useFieldContext } from '@/contexts/Form/form-context';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { FieldInfo } from './FieldInfo';
-import RequiredIndicator from './required-indicator';
-import { useFormValidation } from '@/contexts/Form/use-form-validation-context';
+import { FC } from "react";
+import { cn } from "@/lib/utils";
+import { useFieldContext } from "@/contexts/Form/form-context";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { FieldInfo } from "./FieldInfo";
+import RequiredIndicator from "./required-indicator";
+import { useFormValidation } from "@/contexts/Form/use-form-validation-context";
 
 type TextFieldProps = React.HTMLProps<HTMLInputElement> & {
   className?: string;
@@ -34,7 +34,7 @@ const TextField: FC<TextFieldProps> = ({
   const { isFieldRequired } = useFormValidation();
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn("space-y-3", className)}>
       {!hideLabel && (
         <Label htmlFor={field.name} className="block w-full">
           {label}
@@ -46,7 +46,7 @@ const TextField: FC<TextFieldProps> = ({
         className="form-input"
         name={field.name}
         id={field.name}
-        value={field.state.value ?? ''}
+        value={field.state.value ?? ""}
         aria-invalid={
           field.state.meta.isTouched && field.state.meta.errors?.length > 0
         }

@@ -1,7 +1,7 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
-import '/assets/form.css';
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+import "/assets/form.css";
 
-export const Route = createFileRoute('/settings')({
+export const Route = createFileRoute("/settings")({
   component: SettingsLayoutComponent,
 });
 

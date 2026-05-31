@@ -1,14 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from "@tanstack/react-router";
 import {
   useSuspenseQuery,
   useMutation,
   useQueryClient,
-} from '@tanstack/react-query';
-import { useState } from 'react';
-import { useTRPC } from '@/lib/trpc';
-import { MergeTrackerDialog } from '@/components/settings/MergeTrackerDialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+} from "@tanstack/react-query";
+import { useState } from "react";
+import { useTRPC } from "@/lib/trpc";
+import { MergeTrackerDialog } from "@/components/settings/MergeTrackerDialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +24,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Eye,
   GitMerge,
@@ -35,13 +35,13 @@ import {
   ToggleLeft,
   ToggleRight,
   Trash,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import TrackerViewSheet from '@/components/settings/TrackerViewSheet';
-import TrackerEditSheet from '@/components/settings/TrackerEditSheet';
-import { Page } from '@/components/Page';
+} from "lucide-react";
+import { toast } from "sonner";
+import TrackerViewSheet from "@/components/settings/TrackerViewSheet";
+import TrackerEditSheet from "@/components/settings/TrackerEditSheet";
+import { Page } from "@/components/Page";
 
-export const Route = createFileRoute('/settings/trackers')({
+export const Route = createFileRoute("/settings/trackers")({
   component: TrackerSettings,
 });
 
@@ -69,7 +69,7 @@ function TrackerSettings() {
   const queryClient = useQueryClient();
   const [viewSheetOpen, setViewSheetOpen] = useState(false);
   const [editSheetOpen, setEditSheetOpen] = useState(false);
-  const [editMode, setEditMode] = useState<'edit' | 'create'>('create');
+  const [editMode, setEditMode] = useState<"edit" | "create">("create");
   const [selectedTracker, setSelectedTracker] = useState<Tracker | null>(null);
   const [testingTracker, setTestingTracker] = useState<number | null>(null);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
@@ -86,7 +86,7 @@ function TrackerSettings() {
   const { mutate: updateIndexer } = useMutation(
     trpc.indexers.update.mutationOptions({
       onSuccess: async () => {
-        toast.success('Tracker updated successfully');
+        toast.success("Tracker updated successfully");
         await queryClient.invalidateQueries({
           queryKey: trpc.indexers.getAll.queryKey(),
         });
@@ -120,7 +120,7 @@ function TrackerSettings() {
         toast.success(
           result.mergedCount
             ? `Merged ${result.mergedCount.toLocaleString()} timestamp entries`
-            : 'No timestamps needed merging.',
+            : "No timestamps needed merging.",
         );
         await queryClient.invalidateQueries({
           queryKey: trpc.indexers.getAll.queryKey(),
@@ -139,7 +139,7 @@ function TrackerSettings() {
     trpc.indexers.delete.mutationOptions({
       onSuccess: async (_result, variables) => {
         setDeletingTracker(null);
-        toast.success('Tracker deleted successfully');
+        toast.success("Tracker deleted successfully");
         await queryClient.invalidateQueries({
           queryKey: trpc.indexers.getAll.queryKey(),
         });
@@ -165,7 +165,7 @@ function TrackerSettings() {
       return <Badge variant="secondary">Disabled</Badge>;
     }
 
-    if (indexer.status === 'RATE_LIMITED') {
+    if (indexer.status === "RATE_LIMITED") {
       // Check if rate limit has expired
       if (indexer.retryAfter && Date.now() < indexer.retryAfter) {
         // Still rate limited
@@ -188,7 +188,7 @@ function TrackerSettings() {
       }
     }
 
-    if (indexer.status === 'UNKNOWN_ERROR') {
+    if (indexer.status === "UNKNOWN_ERROR") {
       return (
         <Badge variant="destructive" className="bg-red-700">
           Error
@@ -200,7 +200,7 @@ function TrackerSettings() {
       return <Badge variant="outline">Unknown</Badge>;
     }
 
-    if (indexer.status === null || indexer.status === 'OK') {
+    if (indexer.status === null || indexer.status === "OK") {
       return (
         <Badge variant="default" className="bg-green-700">
           OK
@@ -213,22 +213,22 @@ function TrackerSettings() {
 
   type TrackerWithCaps = Pick<
     Tracker,
-    | 'searchCap'
-    | 'tvSearchCap'
-    | 'movieSearchCap'
-    | 'musicSearchCap'
-    | 'audioSearchCap'
-    | 'bookSearchCap'
+    | "searchCap"
+    | "tvSearchCap"
+    | "movieSearchCap"
+    | "musicSearchCap"
+    | "audioSearchCap"
+    | "bookSearchCap"
   >;
 
   const getCapsBadges = (indexer: TrackerWithCaps) => {
     const caps = [];
-    if (indexer.searchCap) caps.push('Search');
-    if (indexer.tvSearchCap) caps.push('TV');
-    if (indexer.movieSearchCap) caps.push('Movies');
-    if (indexer.musicSearchCap) caps.push('Music');
-    if (indexer.audioSearchCap) caps.push('Audio');
-    if (indexer.bookSearchCap) caps.push('Books');
+    if (indexer.searchCap) caps.push("Search");
+    if (indexer.tvSearchCap) caps.push("TV");
+    if (indexer.movieSearchCap) caps.push("Movies");
+    if (indexer.musicSearchCap) caps.push("Music");
+    if (indexer.audioSearchCap) caps.push("Audio");
+    if (indexer.bookSearchCap) caps.push("Books");
 
     if (caps.length === 0) {
       return <span className="text-muted-foreground text-sm">Unknown</span>;
@@ -247,7 +247,7 @@ function TrackerSettings() {
 
   const handleAddTracker = () => {
     setSelectedTracker(null);
-    setEditMode('create');
+    setEditMode("create");
     setEditSheetOpen(true);
   };
 
@@ -274,7 +274,7 @@ function TrackerSettings() {
   const handleEditTracker = (indexer: Tracker) => {
     setOpenDropdown(null); // Close any open dropdown
     setSelectedTracker(indexer);
-    setEditMode('edit');
+    setEditMode("edit");
     setViewSheetOpen(false); // Close view sheet if open
     setEditSheetOpen(true);
   };
@@ -297,7 +297,7 @@ function TrackerSettings() {
         (target) => target.enabled && target.id !== indexer.id,
       ) ?? [];
     if (!enabledTargets.length) {
-      toast.error('No enabled trackers available to merge into.');
+      toast.error("No enabled trackers available to merge into.");
       return;
     }
     setMergeSourceTracker(indexer);
@@ -321,7 +321,7 @@ function TrackerSettings() {
 
   const handleConfirmMerge = () => {
     if (!mergeSourceTracker || !mergeTargetId) {
-      toast.error('Select a destination tracker to merge into.');
+      toast.error("Select a destination tracker to merge into.");
       return;
     }
     mergeDisabledTracker({
@@ -338,7 +338,7 @@ function TrackerSettings() {
   );
 
   return (
-    <Page breadcrumbs={['Settings', 'Trackers']} actions={addTrackerButton}>
+    <Page breadcrumbs={["Settings", "Trackers"]} actions={addTrackerButton}>
       <div className="space-y-4">
         <div>
           <h1 className="text-2xl font-bold">Trackers</h1>
@@ -366,7 +366,7 @@ function TrackerSettings() {
                   onClick={() => handleViewTracker(indexer)}
                 >
                   <TableCell className="font-medium">
-                    {indexer.name || 'Unnamed'}
+                    {indexer.name || "Unnamed"}
                   </TableCell>
                   <TableCell className="font-mono text-sm">
                     {indexer.url}
@@ -420,8 +420,8 @@ function TrackerSettings() {
                         >
                           <TestTube className="mr-2 h-4 w-4" />
                           {testingTracker === indexer.id
-                            ? 'Testing...'
-                            : 'Test Connection'}
+                            ? "Testing..."
+                            : "Test Connection"}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
@@ -463,8 +463,8 @@ function TrackerSettings() {
                         >
                           <Trash className="mr-2 h-4 w-4" />
                           {deletingTracker === indexer.id
-                            ? 'Deleting...'
-                            : 'Delete'}
+                            ? "Deleting..."
+                            : "Delete"}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Sheet,
   SheetClose,
@@ -13,9 +13,9 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
-import { toast } from 'sonner';
-import { TestTube, Loader2 } from 'lucide-react';
+} from "@/components/ui/sheet";
+import { toast } from "sonner";
+import { TestTube, Loader2 } from "lucide-react";
 
 type Indexer = {
   id: number;
@@ -35,7 +35,7 @@ type Indexer = {
 interface TrackerEditSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  mode: 'edit' | 'create';
+  mode: "edit" | "create";
   tracker: Indexer | null;
 }
 
@@ -47,18 +47,18 @@ export default function TrackerEditSheet({
 }: TrackerEditSheetProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const [name, setName] = useState(tracker?.name || '');
-  const [url, setUrl] = useState(tracker?.url || '');
-  const [apikey, setApikey] = useState('');
+  const [name, setName] = useState(tracker?.name || "");
+  const [url, setUrl] = useState(tracker?.url || "");
+  const [apikey, setApikey] = useState("");
   const [enabled, setEnabled] = useState(tracker?.enabled ?? true);
   const [isTesting, setIsTesting] = useState(false);
 
   // Sync form state when tracker changes
   useEffect(() => {
     if (open) {
-      setName(tracker?.name || '');
-      setUrl(tracker?.url || '');
-      setApikey(''); // Always reset API key for security
+      setName(tracker?.name || "");
+      setUrl(tracker?.url || "");
+      setApikey(""); // Always reset API key for security
       setEnabled(tracker?.enabled ?? true);
     }
   }, [open, tracker]);
@@ -66,7 +66,7 @@ export default function TrackerEditSheet({
   const { mutate: createIndexer, isPending: isCreating } = useMutation(
     trpc.indexers.create.mutationOptions({
       onSuccess: async () => {
-        toast.success('Tracker created successfully');
+        toast.success("Tracker created successfully");
         await queryClient.invalidateQueries({
           queryKey: trpc.indexers.getAll.queryKey(),
         });
@@ -81,7 +81,7 @@ export default function TrackerEditSheet({
   const { mutate: updateIndexer, isPending: isUpdating } = useMutation(
     trpc.indexers.update.mutationOptions({
       onSuccess: async () => {
-        toast.success('Tracker updated successfully');
+        toast.success("Tracker updated successfully");
         await queryClient.invalidateQueries({
           queryKey: trpc.indexers.getAll.queryKey(),
         });
@@ -98,7 +98,7 @@ export default function TrackerEditSheet({
       onSuccess: (result) => {
         setIsTesting(false);
         if (result.success) {
-          toast.success('Connection test successful!');
+          toast.success("Connection test successful!");
         } else {
           toast.error(`Connection test failed: ${result.message}`);
         }
@@ -114,25 +114,25 @@ export default function TrackerEditSheet({
     e.preventDefault();
 
     if (!url.trim()) {
-      toast.error('URL is required');
+      toast.error("URL is required");
       return;
     }
 
     // Validate URL format for torznab API
     const trimmedUrl = url.trim();
-    if (!trimmedUrl.endsWith('/api')) {
-      toast.error('URL must end with /api');
+    if (!trimmedUrl.endsWith("/api")) {
+      toast.error("URL must end with /api");
       return;
     }
 
     try {
       new URL(trimmedUrl);
     } catch {
-      toast.error('Invalid URL format');
+      toast.error("Invalid URL format");
       return;
     }
 
-    if (mode === 'edit' && tracker) {
+    if (mode === "edit" && tracker) {
       const trimmedApikey = apikey.trim();
       updateIndexer({
         id: tracker.id,
@@ -141,9 +141,9 @@ export default function TrackerEditSheet({
         enabled,
         ...(trimmedApikey ? { apikey: trimmedApikey } : {}),
       });
-    } else if (mode === 'create') {
+    } else if (mode === "create") {
       if (!apikey.trim()) {
-        toast.error('API key is required');
+        toast.error("API key is required");
         return;
       }
       createIndexer({
@@ -157,7 +157,7 @@ export default function TrackerEditSheet({
 
   const handleTest = () => {
     if (!url.trim() || !apikey.trim()) {
-      toast.error('URL and API key are required for testing');
+      toast.error("URL and API key are required for testing");
       return;
     }
 
@@ -176,12 +176,12 @@ export default function TrackerEditSheet({
         <form onSubmit={handleSubmit}>
           <SheetHeader>
             <SheetTitle>
-              {mode === 'edit' ? 'Edit Tracker' : 'Add Tracker'}
+              {mode === "edit" ? "Edit Tracker" : "Add Tracker"}
             </SheetTitle>
             <SheetDescription>
-              {mode === 'edit'
-                ? 'Update the tracker details below.'
-                : 'Add a new torznab indexer or tracker.'}
+              {mode === "edit"
+                ? "Update the tracker details below."
+                : "Add a new torznab indexer or tracker."}
             </SheetDescription>
           </SheetHeader>
 
@@ -223,7 +223,7 @@ export default function TrackerEditSheet({
 
             <div className="grid gap-3">
               <Label htmlFor="apikey">
-                API Key{mode === 'edit' ? ' (leave blank to keep current)' : ''}
+                API Key{mode === "edit" ? " (leave blank to keep current)" : ""}
               </Label>
               <Input
                 id="apikey"
@@ -231,12 +231,12 @@ export default function TrackerEditSheet({
                 value={apikey}
                 onChange={(e) => setApikey(e.target.value)}
                 placeholder={
-                  mode === 'edit'
-                    ? 'Leave blank to keep current key'
-                    : 'Enter API key'
+                  mode === "edit"
+                    ? "Leave blank to keep current key"
+                    : "Enter API key"
                 }
                 autoComplete="off"
-                required={mode === 'create'}
+                required={mode === "create"}
               />
             </div>
 
@@ -267,12 +267,12 @@ export default function TrackerEditSheet({
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {mode === 'edit' ? 'Updating...' : 'Creating...'}
+                  {mode === "edit" ? "Updating..." : "Creating..."}
                 </>
-              ) : mode === 'edit' ? (
-                'Update'
+              ) : mode === "edit" ? (
+                "Update"
               ) : (
-                'Create'
+                "Create"
               )}
             </Button>
             <SheetClose asChild>

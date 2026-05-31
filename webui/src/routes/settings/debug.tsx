@@ -1,15 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useState, useEffect, useRef } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { Page } from '@/components/Page';
+import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Page } from "@/components/Page";
 
 function DebugSettings() {
-  const [jsonValue, setJsonValue] = useState('');
+  const [jsonValue, setJsonValue] = useState("");
   const [isValid, setIsValid] = useState(true);
-  const [parseError, setParseError] = useState('');
+  const [parseError, setParseError] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const trpc = useTRPC();
@@ -22,15 +22,15 @@ function DebugSettings() {
   const saveMutation = useMutation(
     trpc.settings.replace.mutationOptions({
       onSuccess: () => {
-        toast.success('Settings saved successfully!', {
-          description: 'Your changes will take effect on the next restart.',
+        toast.success("Settings saved successfully!", {
+          description: "Your changes will take effect on the next restart.",
         });
-        void queryClient.invalidateQueries({ queryKey: ['settings.get'] });
+        void queryClient.invalidateQueries({ queryKey: ["settings.get"] });
       },
       onError: (error: unknown) => {
         const message =
-          error instanceof Error ? error.message : 'An unknown error occurred';
-        toast.error('Failed to save settings', {
+          error instanceof Error ? error.message : "An unknown error occurred";
+        toast.error("Failed to save settings", {
           description: message,
         });
       },
@@ -44,7 +44,7 @@ function DebugSettings() {
       const scrollTop =
         window.pageYOffset || document.documentElement.scrollTop;
 
-      textarea.style.height = 'auto';
+      textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
 
       // Restore the scroll position after layout recalculation
@@ -68,11 +68,11 @@ function DebugSettings() {
     try {
       JSON.parse(value);
       setIsValid(true);
-      setParseError('');
+      setParseError("");
       return true;
     } catch (error) {
       setIsValid(false);
-      setParseError(error instanceof Error ? error.message : 'Invalid JSON');
+      setParseError(error instanceof Error ? error.message : "Invalid JSON");
       return false;
     }
   };
@@ -85,7 +85,7 @@ function DebugSettings() {
 
   const handleSave = () => {
     if (!isValid) {
-      toast.error('Cannot save invalid JSON');
+      toast.error("Cannot save invalid JSON");
       return;
     }
 
@@ -93,7 +93,7 @@ function DebugSettings() {
       const parsedConfig = JSON.parse(jsonValue) as Record<string, unknown>;
       saveMutation.mutate(parsedConfig);
     } catch {
-      toast.error('Failed to parse JSON');
+      toast.error("Failed to parse JSON");
     }
   };
 
@@ -101,14 +101,14 @@ function DebugSettings() {
     if (settingsData?.config) {
       setJsonValue(JSON.stringify(settingsData.config, null, 2));
       setIsValid(true);
-      setParseError('');
+      setParseError("");
       setTimeout(autoResizeTextarea, 0);
     }
   };
 
   if (isLoading) {
     return (
-      <Page breadcrumbs={['Diagnostics', 'Debug']}>
+      <Page breadcrumbs={["Diagnostics", "Debug"]}>
         <div className="flex items-center justify-center p-8">
           <div>Loading settings...</div>
         </div>
@@ -129,13 +129,13 @@ function DebugSettings() {
         onClick={handleSave}
         disabled={!isValid || saveMutation.isPending}
       >
-        {saveMutation.isPending ? 'Saving...' : 'Save'}
+        {saveMutation.isPending ? "Saving..." : "Save"}
       </Button>
     </div>
   );
 
   return (
-    <Page breadcrumbs={['Diagnostics', 'Debug']} actions={actions}>
+    <Page breadcrumbs={["Diagnostics", "Debug"]} actions={actions}>
       <div className="space-y-4">
         <div>
           <h1 className="text-2xl font-bold">Debug Settings</h1>
@@ -151,8 +151,8 @@ function DebugSettings() {
             onChange={(e) => handleJsonChange(e.target.value)}
             className={`min-h-96 w-full resize-none overflow-hidden rounded-md border p-3 font-mono text-sm ${
               isValid
-                ? 'border-gray-300 dark:border-gray-600'
-                : 'border-red-500 dark:border-red-400'
+                ? "border-gray-300 dark:border-gray-600"
+                : "border-red-500 dark:border-red-400"
             } bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100`}
             spellCheck={false}
             placeholder="Loading settings..."
@@ -169,6 +169,6 @@ function DebugSettings() {
   );
 }
 
-export const Route = createFileRoute('/settings/debug')({
+export const Route = createFileRoute("/settings/debug")({
   component: DebugSettings,
 });

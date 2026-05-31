@@ -1,30 +1,30 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Input } from '@/components/ui/input';
+import { useEffect, useMemo, useState } from "react";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const DEFAULT_DURATION_UNITS = [
   {
-    label: 'Millisecond',
-    labelPlural: 'Milliseconds',
-    value: 'milliseconds',
+    label: "Millisecond",
+    labelPlural: "Milliseconds",
+    value: "milliseconds",
     ms: 1,
   },
-  { label: 'Second', labelPlural: 'Seconds', value: 'seconds', ms: 1000 },
-  { label: 'Minute', labelPlural: 'Minutes', value: 'minutes', ms: 60 * 1000 },
-  { label: 'Hour', labelPlural: 'Hours', value: 'hours', ms: 60 * 60 * 1000 },
-  { label: 'Day', labelPlural: 'Days', value: 'days', ms: 24 * 60 * 60 * 1000 },
+  { label: "Second", labelPlural: "Seconds", value: "seconds", ms: 1000 },
+  { label: "Minute", labelPlural: "Minutes", value: "minutes", ms: 60 * 1000 },
+  { label: "Hour", labelPlural: "Hours", value: "hours", ms: 60 * 60 * 1000 },
+  { label: "Day", labelPlural: "Days", value: "days", ms: 24 * 60 * 60 * 1000 },
 ] as const;
 
 type DurationUnit = (typeof DEFAULT_DURATION_UNITS)[number];
 
-export type DurationUnitValue = DurationUnit['value'];
+export type DurationUnitValue = DurationUnit["value"];
 
 export type DurationInputProps = {
   id?: string;
@@ -58,7 +58,7 @@ export function DurationInput({
     }
     return unitList[2]?.value ?? unitList[0].value;
   });
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [hasUserLockedUnit, setHasUserLockedUnit] = useState(false);
 
   const selectedUnitConfig =
@@ -77,7 +77,7 @@ export function DurationInput({
 
   useEffect(() => {
     if (normalizedValue == null) {
-      setInputValue('');
+      setInputValue("");
       return;
     }
 
@@ -104,7 +104,7 @@ export function DurationInput({
   };
 
   return (
-    <div className={cn('flex items-center gap-3', className)}>
+    <div className={cn("flex items-center gap-3", className)}>
       <Input
         id={id}
         name={id}
@@ -156,7 +156,7 @@ function pickBestUnit(value: number, units: readonly DurationUnit[]) {
 }
 
 function parseDurationInput(input: string): number | null {
-  if (!input || input.trim() === '') {
+  if (!input || input.trim() === "") {
     return null;
   }
 
@@ -169,7 +169,7 @@ function parseDurationInput(input: string): number | null {
 }
 
 function formatDurationValue(valueMs: number, unitMs: number) {
-  if (unitMs === 0) return '';
+  if (unitMs === 0) return "";
 
   const numericValue = valueMs / unitMs;
   if (Number.isInteger(numericValue)) {
@@ -180,15 +180,15 @@ function formatDurationValue(valueMs: number, unitMs: number) {
 }
 
 function trimTrailingZeros(value: string) {
-  if (!value.includes('.')) return value;
-  return value.replace(/\.?0+$/, '');
+  if (!value.includes(".")) return value;
+  return value.replace(/\.?0+$/, "");
 }
 
 function normalizeDurationValue(
   value: number | null | undefined,
 ): number | null {
   if (value == null) return null;
-  if (typeof value === 'number') {
+  if (typeof value === "number") {
     return Number.isFinite(value) ? value : null;
   }
 

@@ -1,8 +1,8 @@
-import { useMutation } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
+import { useMutation } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetClose,
@@ -11,11 +11,11 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
-import { toast } from 'sonner';
-import { TestTube, Loader2, Pencil } from 'lucide-react';
-import { useState } from 'react';
-import type { ReactNode } from 'react';
+} from "@/components/ui/sheet";
+import { toast } from "sonner";
+import { TestTube, Loader2, Pencil } from "lucide-react";
+import { useState } from "react";
+import type { ReactNode } from "react";
 
 // ! FIXME: consolidate this type in a types.ts file and import it
 // Same as the one in trackers.tsx (probably)
@@ -115,7 +115,7 @@ export default function TrackerViewSheet({
       onSuccess: (result) => {
         setIsTesting(false);
         if (result.success) {
-          toast.success('Connection test successful!');
+          toast.success("Connection test successful!");
         } else {
           toast.error(`Connection test failed: ${result.message}`);
         }
@@ -149,15 +149,15 @@ export default function TrackerViewSheet({
           <div className="grid gap-3">
             <Label>Tracker Name</Label>
             <div className="bg-muted/50 rounded-md border px-3 py-2 text-sm">
-              {tracker.name || 'Unnamed'}
+              {tracker.name || "Unnamed"}
             </div>
           </div>
 
           <div className="grid gap-3">
             <Label>Status</Label>
             <div className="flex flex-wrap gap-2">
-              <Badge variant={tracker.enabled ? 'default' : 'secondary'}>
-                {tracker.enabled ? 'Enabled' : 'Disabled'}
+              <Badge variant={tracker.enabled ? "default" : "secondary"}>
+                {tracker.enabled ? "Enabled" : "Disabled"}
               </Badge>
             </div>
           </div>

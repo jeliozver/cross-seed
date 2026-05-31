@@ -1,8 +1,8 @@
-import { useFieldContext } from '@/contexts/Form/form-context';
-import { cn } from '@/lib/utils';
-import { FC } from 'react';
-import { Input } from '@/components/ui/input';
-import DeleteOption from '../Buttons/DeleteOption';
+import { useFieldContext } from "@/contexts/Form/form-context";
+import { cn } from "@/lib/utils";
+import { FC } from "react";
+import { Input } from "@/components/ui/input";
+import DeleteOption from "../Buttons/DeleteOption";
 
 type ArrayFieldProps = {
   className?: string;
@@ -19,7 +19,7 @@ const ArrayField: FC<ArrayFieldProps> = ({
   const field = useFieldContext();
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       <Input
         type="text"
         id={`${field.name}`}
@@ -29,7 +29,7 @@ const ArrayField: FC<ArrayFieldProps> = ({
             ? // field values for array fields are always primitives (strings, numbers, booleans)
               // eslint-disable-next-line @typescript-eslint/no-base-to-string
               String(field.state.value)
-            : ''
+            : ""
         }
         aria-invalid={
           !!(

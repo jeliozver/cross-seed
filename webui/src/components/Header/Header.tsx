@@ -1,23 +1,23 @@
-import { useLocation } from '@tanstack/react-router';
-import { ModeToggle } from '@/components/ModeToggle/ModeToggle';
-import { Separator } from '@/components/ui/separator';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useLocation } from "@tanstack/react-router";
+import { ModeToggle } from "@/components/ModeToggle/ModeToggle";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const getPageTitle = (pathname: string): string => {
   switch (pathname) {
-    case '/':
-      return 'Dashboard';
-    case '/logs':
-      return 'Logs';
-    case '/jobs':
-      return 'Jobs';
-    case '/search':
-      return 'Search';
-    case '/settings':
-    case '/settings/general':
-      return 'Settings';
+    case "/":
+      return "Dashboard";
+    case "/logs":
+      return "Logs";
+    case "/jobs":
+      return "Jobs";
+    case "/search":
+      return "Search";
+    case "/settings":
+    case "/settings/general":
+      return "Settings";
     default:
-      return 'cross-seed';
+      return "cross-seed";
   }
 };
 

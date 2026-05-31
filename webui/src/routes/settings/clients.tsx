@@ -1,18 +1,18 @@
-import { Action } from '@cross-seed/shared/constants';
-import { useEffect, useState } from 'react';
-import useConfigForm from '@/hooks/use-config-form';
-import { defaultDownloadClientFormValues } from '@/components/Form/shared-form';
-import { useAppForm } from '@/hooks/form';
-import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
-import { formatConfigDataForForm } from '@/lib/formatConfigData';
-import { downloaderValidationSchema } from '@/types/config';
-import { FormValidationProvider } from '@/contexts/Form/form-validation-provider';
-import { pickSchemaFields } from '@/lib/pick-schema-fields';
-import { createFileRoute } from '@tanstack/react-router';
-import { Page } from '@/components/Page';
-import { Button } from '@/components/ui/button';
-import { Eye, MoreHorizontal, Pencil, Plus, Trash } from 'lucide-react';
+import { Action } from "@cross-seed/shared/constants";
+import { useEffect, useState } from "react";
+import useConfigForm from "@/hooks/use-config-form";
+import { defaultDownloadClientFormValues } from "@/components/Form/shared-form";
+import { useAppForm } from "@/hooks/form";
+import { useQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
+import { formatConfigDataForForm } from "@/lib/formatConfigData";
+import { downloaderValidationSchema } from "@/types/config";
+import { FormValidationProvider } from "@/contexts/Form/form-validation-provider";
+import { pickSchemaFields } from "@/lib/pick-schema-fields";
+import { createFileRoute } from "@tanstack/react-router";
+import { Page } from "@/components/Page";
+import { Button } from "@/components/ui/button";
+import { Eye, MoreHorizontal, Pencil, Plus, Trash } from "lucide-react";
 import {
   Table,
   TableRow,
@@ -20,27 +20,27 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import ClientViewSheet from '@/features/download-client-actions/ClientViewSheet';
-import ClientEditSheet from '@/features/download-client-actions/ClientEditSheet';
+} from "@/components/ui/dropdown-menu";
+import ClientViewSheet from "@/features/download-client-actions/ClientViewSheet";
+import ClientEditSheet from "@/features/download-client-actions/ClientEditSheet";
 import {
   buildClientUrl,
   getPasswordFromClientUrl,
   getUsernameFromClientUrl,
   removeUserAndPassFromClientUrl,
-} from '@/features/download-client-actions/lib/urls';
-import { TDownloadClient } from '@/types/download-clients';
-import { useSettingsFormSubmit } from '@/hooks/use-settings-form-submit';
-import { useSaveConfigHook } from '@/hooks/saveFormHook';
-import z from 'zod';
-import { RuntimeConfig } from '@cross-seed/shared/configSchema';
+} from "@/features/download-client-actions/lib/urls";
+import { TDownloadClient } from "@/types/download-clients";
+import { useSettingsFormSubmit } from "@/hooks/use-settings-form-submit";
+import { useSaveConfigHook } from "@/hooks/saveFormHook";
+import z from "zod";
+import { RuntimeConfig } from "@cross-seed/shared/configSchema";
 
 type ClientFormData = z.input<typeof downloaderValidationSchema>;
 
@@ -58,7 +58,7 @@ function TorrentClientsSettings() {
   );
   const [viewSheetOpen, setViewSheetOpen] = useState(false);
   const [editSheetOpen, setEditSheetOpen] = useState(false);
-  const [editMode, setEditMode] = useState<'create' | 'edit'>('create');
+  const [editMode, setEditMode] = useState<"create" | "edit">("create");
   const { isFieldRequired } = useConfigForm(downloaderValidationSchema);
   const { data: configData } = useQuery(
     trpc.settings.get.queryOptions(undefined, {
@@ -114,21 +114,21 @@ function TorrentClientsSettings() {
       .map((client, index) => {
         if (!client) return null;
 
-        let clientApp = '';
-        let url = '';
+        let clientApp = "";
+        let url = "";
         let readOnly = false;
-        let user = '';
-        let password = '';
+        let user = "";
+        let password = "";
 
-        if (typeof client === 'object') {
+        if (typeof client === "object") {
           clientApp = client.client;
           readOnly = client.readOnly || false;
           url = client.url;
-          user = client.user || '';
-          password = client.password || '';
-        } else if (typeof client === 'string') {
+          user = client.user || "";
+          password = client.password || "";
+        } else if (typeof client === "string") {
           const serializedClient = String(client);
-          clientApp = serializedClient.split(':')[0];
+          clientApp = serializedClient.split(":")[0];
           const readonlyPrefix = `${clientApp}:readonly:`;
           const defaultPrefix = `${clientApp}:`;
           readOnly = serializedClient.startsWith(readonlyPrefix);
@@ -166,7 +166,7 @@ function TorrentClientsSettings() {
     e.preventDefault();
     e.stopPropagation();
     setSelectedClient(null);
-    setEditMode('create');
+    setEditMode("create");
     setEditSheetOpen(true);
   };
 
@@ -188,7 +188,7 @@ function TorrentClientsSettings() {
   const handleEditClient = (client: TDownloadClient) => {
     setOpenDropdown(null);
     setSelectedClient(client);
-    setEditMode('edit');
+    setEditMode("edit");
     setViewSheetOpen(false);
     setEditSheetOpen(true);
   };
@@ -205,8 +205,8 @@ function TorrentClientsSettings() {
       buildClientUrl({
         client: entry.client,
         endpointUrl: entry.url,
-        username: entry.user ?? '',
-        password: entry.password ?? '',
+        username: entry.user ?? "",
+        password: entry.password ?? "",
         readonly: entry.readOnly ?? false,
       }),
     );
@@ -231,7 +231,7 @@ function TorrentClientsSettings() {
 
   return (
     <Page
-      breadcrumbs={['Settings', 'Torrent Clients']}
+      breadcrumbs={["Settings", "Torrent Clients"]}
       actions={addClientButton}
     >
       <div className="space-y-4">
@@ -273,7 +273,7 @@ function TorrentClientsSettings() {
                     <TableCell className="font-mono text-sm">
                       {client.url}
                     </TableCell>
-                    <TableCell>{client.readOnly ? 'Yes' : 'No'}</TableCell>
+                    <TableCell>{client.readOnly ? "Yes" : "No"}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu
                         open={openDropdown === client.url}
@@ -460,6 +460,6 @@ function TorrentClientsSettings() {
   );
 }
 
-export const Route = createFileRoute('/settings/clients')({
+export const Route = createFileRoute("/settings/clients")({
   component: TorrentClientsSettings,
 });

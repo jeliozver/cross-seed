@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Theme, ThemeProviderContext } from './ThemeContext';
+import { useEffect, useState } from "react";
+import { Theme, ThemeProviderContext } from "./ThemeContext";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -9,8 +9,8 @@ type ThemeProviderProps = {
 
 export function ThemeProvider({
   children,
-  defaultTheme = 'system',
-  storageKey = 'xseed-ui-theme',
+  defaultTheme = "system",
+  storageKey = "xseed-ui-theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
@@ -20,13 +20,13 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove('light', 'dark');
+    root.classList.remove("light", "dark");
 
-    if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
-        ? 'dark'
-        : 'light';
+        ? "dark"
+        : "light";
 
       root.classList.add(systemTheme);
       return;

@@ -7,16 +7,16 @@ const safeDecode = (value: string) => {
 };
 
 const normalizeCredentialsForUrlParser = (rawUrl: string) => {
-  const protocolSeparator = '://';
+  const protocolSeparator = "://";
   const protocolEnd = rawUrl.indexOf(protocolSeparator);
   if (protocolEnd === -1) return rawUrl;
 
   const authStart = protocolEnd + protocolSeparator.length;
-  const atIndex = rawUrl.lastIndexOf('@');
+  const atIndex = rawUrl.lastIndexOf("@");
   if (atIndex <= authStart) return rawUrl;
 
   const authPart = rawUrl.slice(authStart, atIndex);
-  const separatorIdx = authPart.indexOf(':');
+  const separatorIdx = authPart.indexOf(":");
   if (separatorIdx === -1) return rawUrl;
 
   const rawUsername = authPart.slice(0, separatorIdx);
@@ -55,11 +55,11 @@ export const removeUserAndPassFromClientUrl = (url: string) => {
     return `${parsedUrl.protocol}//${parsedUrl.host}${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`;
   } catch (error) {
     // Fallback for malformed legacy URLs: strip auth segment by using the last '@'.
-    const protocolSeparator = '://';
+    const protocolSeparator = "://";
     const protocolEnd = url.indexOf(protocolSeparator);
     const authStart =
       protocolEnd === -1 ? -1 : protocolEnd + protocolSeparator.length;
-    const atIndex = url.lastIndexOf('@');
+    const atIndex = url.lastIndexOf("@");
 
     if (authStart !== -1 && atIndex > authStart) {
       const rebuiltUrl = `${url.slice(0, authStart)}${url.slice(atIndex + 1)}`;
@@ -72,15 +72,15 @@ export const removeUserAndPassFromClientUrl = (url: string) => {
     }
 
     // Gracefully degrade if an invalid URL sneaks in so the UI doesn't crash.
-    console.warn('Unable to strip credentials from client URL', error);
+    console.warn("Unable to strip credentials from client URL", error);
     return url;
   }
 };
 
 function buildEndpointUrlWithAuth({
   endpointUrl,
-  username = '',
-  password = '',
+  username = "",
+  password = "",
   includeUsername = true,
 }: {
   endpointUrl: string;
@@ -89,7 +89,7 @@ function buildEndpointUrlWithAuth({
   includeUsername?: boolean;
 }) {
   const url = parseClientUrl(removeUserAndPassFromClientUrl(endpointUrl));
-  url.username = includeUsername ? username : '';
+  url.username = includeUsername ? username : "";
   url.password = password;
   return url.toString();
 }
@@ -97,8 +97,8 @@ function buildEndpointUrlWithAuth({
 export function buildClientUrl({
   client,
   endpointUrl,
-  username = '',
-  password = '',
+  username = "",
+  password = "",
   readonly = false,
 }: {
   client: string;
@@ -111,16 +111,16 @@ export function buildClientUrl({
     endpointUrl,
     username,
     password,
-    includeUsername: client.toLowerCase() !== 'deluge',
+    includeUsername: client.toLowerCase() !== "deluge",
   });
-  return `${client.toLowerCase()}:${readonly ? 'readonly:' : ''}${url}`;
+  return `${client.toLowerCase()}:${readonly ? "readonly:" : ""}${url}`;
 }
 
 export function buildClientTestUrl({
   client,
   endpointUrl,
-  username = '',
-  password = '',
+  username = "",
+  password = "",
 }: {
   client: string;
   endpointUrl: string;
@@ -131,6 +131,6 @@ export function buildClientTestUrl({
     endpointUrl,
     username,
     password,
-    includeUsername: client.toLowerCase() !== 'deluge',
+    includeUsername: client.toLowerCase() !== "deluge",
   });
 }

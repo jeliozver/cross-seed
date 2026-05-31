@@ -1,15 +1,15 @@
-import { useMemo, Fragment, type ReactNode } from 'react';
-import { useLocation } from '@tanstack/react-router';
-import { ModeToggle } from '@/components/ModeToggle/ModeToggle';
-import { Separator } from '@/components/ui/separator';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useMemo, Fragment, type ReactNode } from "react";
+import { useLocation } from "@tanstack/react-router";
+import { ModeToggle } from "@/components/ModeToggle/ModeToggle";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+} from "@/components/ui/breadcrumb";
 
 interface PageProps {
   breadcrumbs?: string[];
@@ -24,7 +24,7 @@ export function Page({ breadcrumbs, actions, children }: PageProps) {
   const autoBreadcrumbs = useMemo(() => {
     if (breadcrumbs) return breadcrumbs;
 
-    const segments = location.pathname.split('/').filter(Boolean);
+    const segments = location.pathname.split("/").filter(Boolean);
     return segments.map(
       (segment) => segment.charAt(0).toUpperCase() + segment.slice(1),
     );

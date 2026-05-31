@@ -1,24 +1,24 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { FieldInfo } from '@/components/Form/FieldInfo';
-import { useState, useEffect, type SyntheticEvent } from 'react';
-import useConfigForm from '@/hooks/use-config-form';
-import { defaultGeneralFormValues } from '@/components/Form/shared-form';
-import { useAppForm } from '@/hooks/form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@/lib/trpc';
-import { Input } from '@/components/ui/input';
-import DeleteOption from '@/components/Buttons/DeleteOption';
-import { formatConfigDataForForm } from '@/lib/formatConfigData';
-import { generalValidationSchema } from '@/types/config';
-import { FormValidationProvider } from '@/contexts/Form/form-validation-provider';
-import { pickSchemaFields } from '@/lib/pick-schema-fields';
-import { Page } from '@/components/Page';
-import { useSettingsFormSubmit } from '@/hooks/use-settings-form-submit';
-import { z } from 'zod';
-import { Clipboard, RotateCcw } from 'lucide-react';
-import { toast } from 'sonner';
+import { createFileRoute } from "@tanstack/react-router";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { FieldInfo } from "@/components/Form/FieldInfo";
+import { useState, useEffect, type SyntheticEvent } from "react";
+import useConfigForm from "@/hooks/use-config-form";
+import { defaultGeneralFormValues } from "@/components/Form/shared-form";
+import { useAppForm } from "@/hooks/form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/lib/trpc";
+import { Input } from "@/components/ui/input";
+import DeleteOption from "@/components/Buttons/DeleteOption";
+import { formatConfigDataForForm } from "@/lib/formatConfigData";
+import { generalValidationSchema } from "@/types/config";
+import { FormValidationProvider } from "@/contexts/Form/form-validation-provider";
+import { pickSchemaFields } from "@/lib/pick-schema-fields";
+import { Page } from "@/components/Page";
+import { useSettingsFormSubmit } from "@/hooks/use-settings-form-submit";
+import { z } from "zod";
+import { Clipboard, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
 
 type GeneralFormData = z.infer<typeof generalValidationSchema>;
 
@@ -49,7 +49,7 @@ function GeneralSettings() {
   });
 
   const [lastFieldAdded, setLastFieldAdded] = useState<string | null>(null);
-  const [apiKeyDraft, setApiKeyDraft] = useState('');
+  const [apiKeyDraft, setApiKeyDraft] = useState("");
   useEffect(() => {
     if (lastFieldAdded) {
       const el = document.getElementById(lastFieldAdded);
@@ -72,11 +72,11 @@ function GeneralSettings() {
           queryKey: trpc.settings.get.queryKey(),
           exact: false,
         });
-        toast.success('API key regenerated and saved');
+        toast.success("API key regenerated and saved");
       },
       onError: (error) => {
-        toast.error('Failed to regenerate API key', {
-          description: error.message || 'An unknown error occurred',
+        toast.error("Failed to regenerate API key", {
+          description: error.message || "An unknown error occurred",
         });
       },
     }),
@@ -89,11 +89,11 @@ function GeneralSettings() {
   const copyApiKey = async () => {
     try {
       await navigator.clipboard.writeText(apiKeyDraft);
-      toast.success('API key copied');
+      toast.success("API key copied");
     } catch (error) {
-      toast.error('Failed to copy API key', {
+      toast.error("Failed to copy API key", {
         description:
-          error instanceof Error ? error.message : 'Clipboard unavailable',
+          error instanceof Error ? error.message : "Clipboard unavailable",
       });
     }
   };
@@ -211,7 +211,7 @@ function GeneralSettings() {
                           variant="secondary"
                           type="button"
                           onClick={() => {
-                            field.pushValue('');
+                            field.pushValue("");
                             setLastFieldAdded(
                               `${field.name}-${field.state.value.length}`,
                             );
@@ -273,6 +273,6 @@ function GeneralSettings() {
   );
 }
 
-export const Route = createFileRoute('/settings/general')({
+export const Route = createFileRoute("/settings/general")({
   component: GeneralSettings,
 });

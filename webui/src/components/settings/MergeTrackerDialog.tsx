@@ -7,14 +7,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 export type TrackerSummary = {
   id: number;
@@ -53,10 +53,10 @@ export function MergeTrackerDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Merge Disabled Tracker</AlertDialogTitle>
           <AlertDialogDescription>
-            Move timestamp history from{' '}
+            Move timestamp history from{" "}
             <span className="font-medium">
-              {sourceTracker?.name || sourceTracker?.url || ''}
-            </span>{' '}
+              {sourceTracker?.name || sourceTracker?.url || ""}
+            </span>{" "}
             into another tracker before permanently deleting it.
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -94,7 +94,7 @@ export function MergeTrackerDialog({
             onClick={onConfirm}
             disabled={isMerging || !targetId}
           >
-            {isMerging ? 'Merging…' : 'Merge'}
+            {isMerging ? "Merging…" : "Merge"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

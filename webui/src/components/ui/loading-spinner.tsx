@@ -1,27 +1,27 @@
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 interface LoadingSpinnerProps {
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   showText?: boolean;
 }
 
 export function LoadingSpinner({
   className,
-  size = 'md',
+  size = "md",
   showText = true,
 }: LoadingSpinnerProps) {
   const sizeClasses = {
-    sm: 'h-16 w-16',
-    md: 'h-32 w-32 max-w-[25vw] max-h-[25vh]',
-    lg: 'h-48 w-48 max-w-[40vw] max-h-[40vh]',
+    sm: "h-16 w-16",
+    md: "h-32 w-32 max-w-[25vw] max-h-[25vh]",
+    lg: "h-48 w-48 max-w-[40vw] max-h-[40vh]",
   };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-2">
       <svg
         className={cn(
-          'text-primary animate-spin [animation-duration:1.5s]',
+          "text-primary animate-spin [animation-duration:1.5s]",
           sizeClasses[size],
           className,
         )}

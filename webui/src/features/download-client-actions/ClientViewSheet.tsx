@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetClose,
@@ -8,8 +8,8 @@ import {
   SheetHeader,
   SheetFooter,
   SheetTitle,
-} from '@/components/ui/sheet';
-import { Pencil } from 'lucide-react';
+} from "@/components/ui/sheet";
+import { Pencil } from "lucide-react";
 
 // ! FIXME: consolidate this type in a types.ts file and import it
 // Same as the one in clients.tsx
@@ -47,28 +47,28 @@ export default function ClientViewSheet({
           <div className="grid gap-3">
             <Label>URL</Label>
             <div className="bg-muted/50 rounded-md border px-3 py-2 font-mono text-sm break-all">
-              {client?.url || 'N/A'}
+              {client?.url || "N/A"}
             </div>
           </div>
 
           <div className="grid gap-3">
             <Label>Username</Label>
             <div className="bg-muted/50 rounded-md border px-3 py-2 font-mono text-sm break-all">
-              {client?.user || 'N/A'}
+              {client?.user || "N/A"}
             </div>
           </div>
 
           <div className="grid gap-3">
             <Label>Password</Label>
             <div className="bg-muted/50 rounded-md border px-3 py-2 font-mono text-sm break-all">
-              {client?.password ? '********' : 'N/A'}
+              {client?.password ? "********" : "N/A"}
             </div>
           </div>
 
           <div className="grid gap-3">
             <Label>Read only</Label>
             <div className="bg-muted/50 rounded-md border px-3 py-2 font-mono text-sm break-all">
-              {client?.readOnly ? 'Yes' : 'No'}
+              {client?.readOnly ? "Yes" : "No"}
             </div>
           </div>
         </div>

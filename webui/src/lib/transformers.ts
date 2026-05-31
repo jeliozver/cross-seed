@@ -4,7 +4,7 @@
  * @return - The filtered array with empty string values removed.
  */
 export function removeEmptyArrayValues<T>(array: T[]) {
-  return array.filter((item) => item !== '');
+  return array.filter((item) => item !== "");
 }
 
 /**

@@ -1,7 +1,7 @@
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label.tsx';
-import { Separator } from '@/components/ui/separator.tsx';
-import { Switch } from '@/components/ui/switch.tsx';
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
+import { Switch } from "@/components/ui/switch.tsx";
 import {
   Table,
   TableBody,
@@ -9,11 +9,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { formatRelativeTime } from '@/lib/time';
-import { useTRPC } from '@/lib/trpc';
-import { useSubscription } from '@trpc/tanstack-react-query';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+} from "@/components/ui/table";
+import { formatRelativeTime } from "@/lib/time";
+import { useTRPC } from "@/lib/trpc";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 interface LogEntry {
   timestamp: string;
@@ -26,14 +26,14 @@ export function Logs() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [levelFilters, setLevelFilters] = useState<Set<string>>(
-    new Set(['error', 'warn', 'info', 'verbose', 'debug']),
+    new Set(["error", "warn", "info", "verbose", "debug"]),
   );
   const [isReversed, setIsReversed] = useState(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return false;
     }
-    const storedValue = window.localStorage.getItem('logs:newest-first');
-    return storedValue === 'true';
+    const storedValue = window.localStorage.getItem("logs:newest-first");
+    return storedValue === "true";
   });
   const [labelFilters, setLabelFilters] = useState<Set<string>>(new Set());
   const trpc = useTRPC();
@@ -51,7 +51,7 @@ export function Logs() {
           });
         },
         onError: (err) => {
-          console.error('Log subscription error:', err);
+          console.error("Log subscription error:", err);
         },
       },
     ),
@@ -66,10 +66,10 @@ export function Logs() {
       setIsAtBottom(atBottom);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     handleScroll(); // Check initial state
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Auto-scroll to bottom when new logs arrive and user is at bottom
@@ -77,13 +77,13 @@ export function Logs() {
     if (isAtBottom && logs.length > 0) {
       window.scrollTo({
         top: document.documentElement.scrollHeight,
-        behavior: 'instant',
+        behavior: "instant",
       });
     }
   }, [logs, isAtBottom]);
 
   useEffect(() => {
-    window.localStorage.setItem('logs:newest-first', String(isReversed));
+    window.localStorage.setItem("logs:newest-first", String(isReversed));
   }, [isReversed]);
 
   // Get unique labels from logs
@@ -123,33 +123,33 @@ export function Logs() {
     <div className="w-full space-y-6">
       <div className="flex flex-wrap items-stretch justify-between gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          {(['error', 'warn', 'info', 'verbose', 'debug'] as const).map(
+          {(["error", "warn", "info", "verbose", "debug"] as const).map(
             (level) => (
               <Badge
                 key={level}
-                variant={levelFilters.has(level) ? 'default' : 'outline'}
+                variant={levelFilters.has(level) ? "default" : "outline"}
                 className={`hover:bg-muted cursor-pointer select-none ${
-                  level === 'error'
+                  level === "error"
                     ? levelFilters.has(level)
-                      ? 'bg-red-500 hover:bg-red-600'
-                      : 'border-red-200 text-red-500'
-                    : level === 'warn'
+                      ? "bg-red-500 hover:bg-red-600"
+                      : "border-red-200 text-red-500"
+                    : level === "warn"
                       ? levelFilters.has(level)
-                        ? 'bg-yellow-500 hover:bg-yellow-600'
-                        : 'border-yellow-200 text-yellow-500'
-                      : level === 'info'
+                        ? "bg-yellow-500 hover:bg-yellow-600"
+                        : "border-yellow-200 text-yellow-500"
+                      : level === "info"
                         ? levelFilters.has(level)
-                          ? 'bg-blue-500 hover:bg-blue-600'
-                          : 'border-blue-200 text-blue-500'
-                        : level === 'verbose'
+                          ? "bg-blue-500 hover:bg-blue-600"
+                          : "border-blue-200 text-blue-500"
+                        : level === "verbose"
                           ? levelFilters.has(level)
-                            ? 'bg-gray-500 hover:bg-gray-600'
-                            : 'border-gray-200 text-gray-500'
-                          : level === 'debug'
+                            ? "bg-gray-500 hover:bg-gray-600"
+                            : "border-gray-200 text-gray-500"
+                          : level === "debug"
                             ? levelFilters.has(level)
-                              ? 'bg-purple-500 hover:bg-purple-600'
-                              : 'border-purple-200 text-purple-500'
-                            : ''
+                              ? "bg-purple-500 hover:bg-purple-600"
+                              : "border-purple-200 text-purple-500"
+                            : ""
                 }`}
                 onClick={() => {
                   setLevelFilters((prev) => {
@@ -175,7 +175,7 @@ export function Logs() {
           {uniqueLabels.map((label) => (
             <Badge
               key={label}
-              variant={labelFilters.has(label) ? 'default' : 'outline'}
+              variant={labelFilters.has(label) ? "default" : "outline"}
               className="hover:bg-muted cursor-pointer font-mono text-xs select-none"
               onClick={() => {
                 setLabelFilters((prev) => {
@@ -225,26 +225,26 @@ export function Logs() {
                   <TableCell className="py-1">
                     <Badge
                       variant={
-                        log.level === 'error'
-                          ? 'destructive'
-                          : log.level === 'warn'
-                            ? 'secondary'
-                            : log.level === 'info'
-                              ? 'default'
-                              : log.level === 'debug'
-                                ? 'outline'
-                                : 'secondary'
+                        log.level === "error"
+                          ? "destructive"
+                          : log.level === "warn"
+                            ? "secondary"
+                            : log.level === "info"
+                              ? "default"
+                              : log.level === "debug"
+                                ? "outline"
+                                : "secondary"
                       }
                       className={
-                        log.level === 'warn'
-                          ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
-                          : log.level === 'info'
-                            ? 'bg-blue-500 text-white hover:bg-blue-600'
-                            : log.level === 'verbose'
-                              ? 'bg-gray-500 text-white hover:bg-gray-600'
-                              : log.level === 'debug'
-                                ? 'bg-purple-500 text-white hover:bg-purple-600'
-                                : ''
+                        log.level === "warn"
+                          ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                          : log.level === "info"
+                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                            : log.level === "verbose"
+                              ? "bg-gray-500 text-white hover:bg-gray-600"
+                              : log.level === "debug"
+                                ? "bg-purple-500 text-white hover:bg-purple-600"
+                                : ""
                       }
                     >
                       {log.level}
@@ -276,8 +276,8 @@ export function Logs() {
             <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
             <span className="text-sm font-medium">
               {logs.length === 0
-                ? 'Waiting for logs...'
-                : 'No logs match current filters'}
+                ? "Waiting for logs..."
+                : "No logs match current filters"}
             </span>
           </div>
           {logs.length === 0 && (

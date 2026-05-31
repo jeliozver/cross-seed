@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
-import { useSaveConfigHook } from '@/hooks/saveFormHook';
-import { removeEmptyArrayValues, removeNullFields } from '@/lib/transformers';
+import { useCallback } from "react";
+import { useSaveConfigHook } from "@/hooks/saveFormHook";
+import { removeEmptyArrayValues, removeNullFields } from "@/lib/transformers";
 
 export function useSettingsFormSubmit() {
   const { saveConfigAsync } = useSaveConfigHook();
@@ -20,10 +20,10 @@ export function useSettingsFormSubmit() {
         await saveConfigAsync(value);
         return { value };
       } catch (err) {
-        console.error('Exception:', err);
+        console.error("Exception:", err);
         return {
-          status: 'error',
-          error: { _form: 'An unexpected error occurred' },
+          status: "error",
+          error: { _form: "An unexpected error occurred" },
         };
       }
     },

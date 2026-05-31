@@ -1,5 +1,5 @@
-import { useTRPC } from '@/lib/trpc';
-import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from "@/lib/trpc";
+import { useMutation } from "@tanstack/react-query";
 
 export const useImportConfig = () => {
   const trpc = useTRPC();
@@ -9,7 +9,7 @@ export const useImportConfig = () => {
       // Optionally handle success, e.g., show a notification
     },
     onError: (error) => {
-      console.error('Error saving config:', error);
+      console.error("Error saving config:", error);
       // Optionally handle error, e.g., show an error notification
     },
   });

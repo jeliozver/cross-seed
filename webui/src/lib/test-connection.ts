@@ -1,19 +1,19 @@
-import { trpcClient } from './trpc';
+import { trpcClient } from "./trpc";
 
 type DownloadClientKind =
-  | 'qbittorrent'
-  | 'rtorrent'
-  | 'transmission'
-  | 'deluge';
+  | "qbittorrent"
+  | "rtorrent"
+  | "transmission"
+  | "deluge";
 
 function isDownloadClientKind(value: string): value is DownloadClientKind {
-  return ['qbittorrent', 'rtorrent', 'transmission', 'deluge'].includes(value);
+  return ["qbittorrent", "rtorrent", "transmission", "deluge"].includes(value);
 }
 
 export const testConnection = async ({
   client,
   url,
-  username = '',
+  username = "",
   password,
 }: {
   client: string;
@@ -37,7 +37,7 @@ export const testConnection = async ({
 
     return { success: result.success };
   } catch (error) {
-    console.error('Error testing connection:', error);
+    console.error("Error testing connection:", error);
     return { success: false };
   }
 };

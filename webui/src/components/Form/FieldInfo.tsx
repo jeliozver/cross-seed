@@ -1,5 +1,5 @@
-import type { AnyFieldMeta } from '@tanstack/react-form';
-import { FC } from 'react';
+import type { AnyFieldMeta } from "@tanstack/react-form";
+import { FC } from "react";
 
 type FieldInfoProps = {
   fieldMeta: AnyFieldMeta | undefined;
@@ -17,7 +17,7 @@ export const FieldInfo: FC<FieldInfoProps> = ({
       <>
         <span className="text-sm text-red-600">
           {fieldMeta.errors.map((error, i) => {
-            if (typeof error === 'object' && error !== null) {
+            if (typeof error === "object" && error !== null) {
               // Handle the case where error is an object
               return (
                 <span key={i}>

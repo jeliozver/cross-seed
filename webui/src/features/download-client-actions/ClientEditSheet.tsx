@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useTRPC } from '@/lib/trpc';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { useTRPC } from "@/lib/trpc";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   Sheet,
   SheetClose,
@@ -11,31 +11,31 @@ import {
   SheetHeader,
   SheetFooter,
   SheetTitle,
-} from '@/components/ui/sheet';
-import { TestTube, Loader2 } from 'lucide-react';
-import { useAppForm } from '@/hooks/form';
-import { formOpts } from '@/components/Form/shared-form';
-import { clientValidationSchema } from '@/types/config';
-import { useSaveConfigHook } from '@/hooks/saveFormHook';
-import useConfigForm from '@/hooks/use-config-form';
-import { FormValidationProvider } from '@/contexts/Form/form-validation-provider';
-import { buildClientUrl, buildClientTestUrl } from './lib/urls';
-import { TDownloadClient } from '@/types/download-clients';
-import { testConnection } from '@/lib/test-connection';
+} from "@/components/ui/sheet";
+import { TestTube, Loader2 } from "lucide-react";
+import { useAppForm } from "@/hooks/form";
+import { formOpts } from "@/components/Form/shared-form";
+import { clientValidationSchema } from "@/types/config";
+import { useSaveConfigHook } from "@/hooks/saveFormHook";
+import useConfigForm from "@/hooks/use-config-form";
+import { FormValidationProvider } from "@/contexts/Form/form-validation-provider";
+import { buildClientUrl, buildClientTestUrl } from "./lib/urls";
+import { TDownloadClient } from "@/types/download-clients";
+import { testConnection } from "@/lib/test-connection";
 // import { Label as Labels } from '../../../../../src/logger';
 
 interface ClientEditSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  mode: 'edit' | 'create';
+  mode: "edit" | "create";
   client: TDownloadClient | null;
 }
 
 const CLIENTS = {
-  qbittorrent: 'qBittorrent',
-  rtorrent: 'rTorrent',
-  transmission: 'Transmission',
-  deluge: 'Deluge',
+  qbittorrent: "qBittorrent",
+  rtorrent: "rTorrent",
+  transmission: "Transmission",
+  deluge: "Deluge",
 };
 
 export default function ClientEditSheet({
@@ -69,21 +69,21 @@ export default function ClientEditSheet({
         };
         const result = clientValidationSchema.safeParse(sanitizedValue);
         if (!result.success) {
-          console.error('FULL VALIDATION FAILED:', result.error.format());
-          throw new Error('Validation failed');
+          console.error("FULL VALIDATION FAILED:", result.error.format());
+          throw new Error("Validation failed");
         } else {
           // build url first
           const validatedData = result.data;
           const clientString = buildClientUrl({
             client: validatedData.client,
             endpointUrl: validatedData.url,
-            username: validatedData.user ?? '',
-            password: validatedData.password ?? '',
+            username: validatedData.user ?? "",
+            password: validatedData.password ?? "",
             readonly: validatedData.readOnly,
           });
 
           let updatedClients: string[];
-          if (mode === 'edit' && client && client.index !== undefined) {
+          if (mode === "edit" && client && client.index !== undefined) {
             updatedClients = [...(existingClients || [])];
             updatedClients[client.index] = clientString;
           } else {
@@ -94,10 +94,10 @@ export default function ClientEditSheet({
           onOpenChange(false);
         }
       } catch (err: unknown) {
-        console.error('Exception during full validation:', err);
+        console.error("Exception during full validation:", err);
         return {
-          status: 'error',
-          error: { _form: 'An unexpected error occurred during validation' },
+          status: "error",
+          error: { _form: "An unexpected error occurred during validation" },
         };
       }
     },
@@ -108,13 +108,13 @@ export default function ClientEditSheet({
 
   const handleTest = async () => {
     setIsTesting(true);
-    const client = String(form.getFieldValue('client'));
-    const url = String(form.getFieldValue('url'));
+    const client = String(form.getFieldValue("client"));
+    const url = String(form.getFieldValue("url"));
     const username = String(
-      (form.getFieldValue('user') as string | undefined) ?? '',
+      (form.getFieldValue("user") as string | undefined) ?? "",
     );
     const password = String(
-      (form.getFieldValue('password') as string | undefined) ?? '',
+      (form.getFieldValue("password") as string | undefined) ?? "",
     );
 
     const testUrl = buildClientTestUrl({
@@ -130,13 +130,13 @@ export default function ClientEditSheet({
       password,
     });
     if (result.success) {
-      toast.success('Connection successful!', {
-        description: 'The torrent client connection was successful.',
+      toast.success("Connection successful!", {
+        description: "The torrent client connection was successful.",
       });
       setIsTesting(false);
     } else {
-      toast.error('Connection failed', {
-        description: 'Failed to connect to the torrent client.',
+      toast.error("Connection failed", {
+        description: "Failed to connect to the torrent client.",
       });
       setIsTesting(false);
     }
@@ -157,12 +157,12 @@ export default function ClientEditSheet({
           >
             <SheetHeader>
               <SheetTitle>
-                {mode === 'edit' ? 'Edit Client' : 'Create Client'}
+                {mode === "edit" ? "Edit Client" : "Create Client"}
               </SheetTitle>
               <SheetDescription>
-                {mode === 'edit'
-                  ? 'Edit the details of the torrent client.'
-                  : 'Create a new torrent client.'}
+                {mode === "edit"
+                  ? "Edit the details of the torrent client."
+                  : "Create a new torrent client."}
               </SheetDescription>
             </SheetHeader>
 
@@ -226,12 +226,12 @@ export default function ClientEditSheet({
                   // Determine if test button should be enabled
                   const urlValid = urlValue && !urlMeta?.errors?.length;
                   const passwordValid =
-                    clientValue === 'transmission' &&
+                    clientValue === "transmission" &&
                     passwordValue === undefined
                       ? true
                       : passwordValue && !passwordMeta?.errors?.length;
                   const userValid =
-                    clientValue === 'deluge' || clientValue === 'transmission'
+                    clientValue === "deluge" || clientValue === "transmission"
                       ? true
                       : userValue && !userMeta?.errors?.length;
 
@@ -259,13 +259,13 @@ export default function ClientEditSheet({
                           </>
                         )}
                       </Button>
-                      {clientValue === 'qbittorrent' && (
+                      {clientValue === "qbittorrent" && (
                         <p className="text-muted-foreground -mt-4 px-2 text-sm italic">
                           Note: Testing connections can return false positives
-                          if{' '}
+                          if{" "}
                           <code className="bg-yellow-100 px-1">
                             Bypass auth on localhost
-                          </code>{' '}
+                          </code>{" "}
                           is enabled in qBittorrent.
                         </p>
                       )}
@@ -278,8 +278,8 @@ export default function ClientEditSheet({
             <SheetFooter className="mt-6">
               <form.AppForm>
                 <form.SubmitButton
-                  label={mode === 'edit' ? 'Update' : 'Create'}
-                  actionLabel={mode === 'edit' ? 'Updating...' : 'Creating...'}
+                  label={mode === "edit" ? "Update" : "Create"}
+                  actionLabel={mode === "edit" ? "Updating..." : "Creating..."}
                 />
               </form.AppForm>
               <SheetClose asChild>

@@ -1,15 +1,15 @@
-import { useFormContext } from '@/contexts/Form/form-context';
-import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useFormContext } from "@/contexts/Form/form-context";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SubmitButtonProps {
   label?: string;
   actionLabel?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
-function SubmitButton({ label, actionLabel, size = 'md' }: SubmitButtonProps) {
+function SubmitButton({ label, actionLabel, size = "md" }: SubmitButtonProps) {
   const form = useFormContext();
 
   return (
@@ -22,23 +22,23 @@ function SubmitButton({ label, actionLabel, size = 'md' }: SubmitButtonProps) {
             <Button
               type="submit"
               className={cn(
-                'w-full rounded-md transition-colors duration-150',
+                "w-full rounded-md transition-colors duration-150",
                 {
-                  'opacity-70': isSubmitting,
-                  'px-4 py-6': size === 'lg',
-                  'px-4 py-2': size === 'md',
-                  'px-2 py-1': size === 'sm',
+                  "opacity-70": isSubmitting,
+                  "px-4 py-6": size === "lg",
+                  "px-4 py-2": size === "md",
+                  "px-2 py-1": size === "sm",
                 },
               )}
               disabled={!canSubmit || isSubmitting}
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" />{' '}
-                  {actionLabel ?? 'Saving...'}
+                  <Loader2 className="size-4 animate-spin" />{" "}
+                  {actionLabel ?? "Saving..."}
                 </>
               ) : (
-                <>{label ?? 'Save'}</>
+                <>{label ?? "Save"}</>
               )}
             </Button>
           </div>

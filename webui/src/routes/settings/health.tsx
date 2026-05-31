@@ -1,14 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   AlertTriangle,
   CheckCircle2,
   Info,
   OctagonAlert,
   RefreshCw,
-} from 'lucide-react';
-import { humanReadableSize } from '@cross-seed/shared/utils';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { humanReadableSize } from "@cross-seed/shared/utils";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -16,10 +16,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Page } from '@/components/Page';
-import { useTRPC } from '@/lib/trpc';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/table";
+import { Page } from "@/components/Page";
+import { useTRPC } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
 
 const severityOrder = {
   error: 0,
@@ -28,9 +28,9 @@ const severityOrder = {
 } as const;
 
 const severityStyles = {
-  error: 'border-red-500/60 bg-red-500/10',
-  warning: 'border-amber-500/60 bg-amber-500/10',
-  info: 'border-sky-500/60 bg-sky-500/10',
+  error: "border-red-500/60 bg-red-500/10",
+  warning: "border-amber-500/60 bg-amber-500/10",
+  info: "border-sky-500/60 bg-sky-500/10",
 } as const;
 
 const severityIcon = {
@@ -52,17 +52,17 @@ function HealthPage() {
   );
   const db = diagnostics?.db;
   const formatCount = (value: number | null | undefined) =>
-    value === null || value === undefined ? 'Unknown' : value.toLocaleString();
+    value === null || value === undefined ? "Unknown" : value.toLocaleString();
   const formatPercent = (value: number | null | undefined) =>
-    value === null || value === undefined ? 'Unknown' : `${value.toFixed(1)}%`;
+    value === null || value === undefined ? "Unknown" : `${value.toFixed(1)}%`;
   const formatSizeValue = (value: number | null | undefined) =>
     value === null || value === undefined
-      ? 'Unknown'
+      ? "Unknown"
       : humanReadableSize(value, { binary: true });
 
   return (
     <Page
-      breadcrumbs={['Diagnostics', 'Health']}
+      breadcrumbs={["Diagnostics", "Health"]}
       actions={
         <Button
           variant="outline"
@@ -74,8 +74,8 @@ function HealthPage() {
         >
           <RefreshCw
             className={cn(
-              'mr-2 h-4 w-4',
-              isFetching && 'text-primary animate-spin',
+              "mr-2 h-4 w-4",
+              isFetching && "text-primary animate-spin",
             )}
           />
           Refresh
@@ -109,7 +109,7 @@ function HealthPage() {
                 <div
                   key={problem.id}
                   className={cn(
-                    'flex items-start gap-3 rounded-lg border p-4 text-sm',
+                    "flex items-start gap-3 rounded-lg border p-4 text-sm",
                     severityStyles[problem.severity],
                   )}
                 >
@@ -238,6 +238,6 @@ function HealthPage() {
   );
 }
 
-export const Route = createFileRoute('/settings/health')({
+export const Route = createFileRoute("/settings/health")({
   component: HealthPage,
 });

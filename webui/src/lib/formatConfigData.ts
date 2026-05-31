@@ -2,7 +2,7 @@ import {
   RuntimeConfig,
   WebhookEntry,
   WebhookObjectSchema,
-} from '@cross-seed/shared/configSchema';
+} from "@cross-seed/shared/configSchema";
 
 /**
  * Transforms API config data for the WebUI form. Webhook entries are normalized
@@ -17,17 +17,17 @@ export function formatConfigDataForForm(config: RuntimeConfig) {
     ...(config.notificationWebhookUrls && {
       notificationWebhookUrls: config.notificationWebhookUrls.map(
         (e: WebhookEntry) => {
-          if (typeof e === 'string') {
-            return { url: e, payload: '', headers: '', advancedOpen: false };
+          if (typeof e === "string") {
+            return { url: e, payload: "", headers: "", advancedOpen: false };
           }
           const parsed = WebhookObjectSchema.safeParse(e);
           if (parsed.success) {
             const payload = parsed.data.payload
               ? JSON.stringify(parsed.data.payload)
-              : '';
+              : "";
             const headers = parsed.data.headers
               ? JSON.stringify(parsed.data.headers)
-              : '';
+              : "";
             return {
               url: parsed.data.url,
               payload,
@@ -36,9 +36,9 @@ export function formatConfigDataForForm(config: RuntimeConfig) {
             };
           }
           return {
-            url: '',
-            payload: '',
-            headers: '',
+            url: "",
+            payload: "",
+            headers: "",
             advancedOpen: false,
           };
         },

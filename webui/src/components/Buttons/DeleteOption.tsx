@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { FC } from 'react';
-import { Trash2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import { FC } from "react";
+import { Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type DeleteOptionProps = {
   className?: string;
@@ -13,7 +13,7 @@ const DeleteOption: FC<DeleteOptionProps> = ({ className, onClick }) => {
     <Button
       type="button"
       variant="destructive"
-      className={cn('', className)}
+      className={cn("", className)}
       onClick={onClick}
     >
       <span className="sr-only">Delete option</span>

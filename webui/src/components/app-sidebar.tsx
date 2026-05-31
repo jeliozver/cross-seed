@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { Link } from '@tanstack/react-router';
-import Logo from '@/assets/cross-seed.svg';
+import * as React from "react";
+import { Link } from "@tanstack/react-router";
+import Logo from "@/assets/cross-seed.svg";
 import {
   useMutation,
   useQuery,
   useSuspenseQuery,
   useQueryClient,
-} from '@tanstack/react-query';
+} from "@tanstack/react-query";
 import {
   LogOut,
   Home,
@@ -21,9 +21,9 @@ import {
   Popcorn,
   Library,
   AlertTriangle,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -37,78 +37,78 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
-} from '@/components/ui/sidebar';
-import { useTRPC } from '@/lib/trpc';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/sidebar";
+import { useTRPC } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
 
 const navItems = [
   {
-    title: 'Main',
+    title: "Main",
     items: [
       {
-        title: 'Dashboard',
+        title: "Dashboard",
         icon: <Home className="size-4" />,
-        url: '/',
+        url: "/",
       },
       {
-        title: 'Library',
+        title: "Library",
         icon: <Library className="size-4" />,
-        url: '/library',
+        url: "/library",
       },
       {
-        title: 'Jobs',
+        title: "Jobs",
         icon: <Clock className="size-4" />,
-        url: '/jobs',
+        url: "/jobs",
       },
     ],
   },
   {
-    title: 'Settings',
+    title: "Settings",
     items: [
       {
-        title: 'General',
+        title: "General",
         icon: <Settings className="size-4" />,
-        url: '/settings/general',
+        url: "/settings/general",
       },
       {
-        title: 'Trackers',
+        title: "Trackers",
         icon: <Popcorn className="size-4" />,
-        url: '/settings/trackers',
+        url: "/settings/trackers",
       },
       {
-        title: 'Torrent Clients',
+        title: "Torrent Clients",
         icon: <Download className="size-4" />,
-        url: '/settings/clients',
+        url: "/settings/clients",
       },
       {
-        title: 'Search & RSS',
+        title: "Search & RSS",
         icon: <Search className="size-4" />,
-        url: '/settings/search',
+        url: "/settings/search",
       },
       {
-        title: 'Connect',
+        title: "Connect",
         icon: <Webhook className="size-4" />,
-        url: '/settings/connect',
+        url: "/settings/connect",
       },
       {
-        title: 'Directories',
+        title: "Directories",
         icon: <Folders className="size-4" />,
-        url: '/settings/directories',
+        url: "/settings/directories",
       },
     ],
   },
   {
-    title: 'Diagnostics',
+    title: "Diagnostics",
     items: [
       {
-        title: 'Health',
+        title: "Health",
         icon: <AlertTriangle className="size-4" />,
-        url: '/settings/health',
+        url: "/settings/health",
       },
       {
-        title: 'Logs',
+        title: "Logs",
         icon: <FileText className="size-4" />,
-        url: '/logs',
+        url: "/logs",
       },
     ],
   },
@@ -128,11 +128,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     refetchInterval: 60_000,
   });
   const healthStatus = healthData?.problems.some(
-    (problem) => problem.severity === 'error',
+    (problem) => problem.severity === "error",
   )
-    ? 'error'
-    : healthData?.problems.some((problem) => problem.severity === 'warning')
-      ? 'warning'
+    ? "error"
+    : healthData?.problems.some((problem) => problem.severity === "warning")
+      ? "warning"
       : undefined;
   const buildInfo = buildInfoResponse?.build;
   const buildVersion = buildInfoResponse?.version;
@@ -141,31 +141,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const shortSha = buildInfo?.commitSha?.slice(0, 7);
   const buildLine = [buildTag, shortSha, buildBranch]
     .filter(Boolean)
-    .join(' · ');
-  const commitMessage = buildInfo?.message?.split('\n')[0]?.trim();
+    .join(" · ");
+  const commitMessage = buildInfo?.message?.split("\n")[0]?.trim();
   const buildDate = (() => {
     if (!buildInfo?.date) return undefined;
     const parsed = new Date(buildInfo.date);
     if (Number.isNaN(parsed.getTime())) return buildInfo.date;
     return parsed.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: '2-digit',
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
     });
   })();
-  const normalizedTag = buildInfo?.tag?.replace(/^v/i, '') ?? '';
+  const normalizedTag = buildInfo?.tag?.replace(/^v/i, "") ?? "";
   const isVersionTrackingTag =
-    normalizedTag === 'latest' ||
+    normalizedTag === "latest" ||
     /^\d+(\.\d+){0,2}([-.][0-9A-Za-z.]+)?$/.test(normalizedTag);
   const formatVersion = (version?: string) => {
     if (!version) return undefined;
-    return version.startsWith('v') ? version : `v${version}`;
+    return version.startsWith("v") ? version : `v${version}`;
   };
   const preferCommitInfo =
     authStatus?.isDocker && buildInfo?.tag && !isVersionTrackingTag;
   const commitLine = [shortSha, buildBranch, buildDate]
     .filter(Boolean)
-    .join(' · ');
+    .join(" · ");
   const hasCommitInfo = Boolean(commitLine || commitMessage);
   const isSourceBuild =
     !authStatus?.isDocker && !buildInfo?.tag && hasCommitInfo;
@@ -173,17 +173,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     !authStatus?.isDocker && !buildInfo?.tag && !hasCommitInfo;
   const versionLabel = formatVersion(buildVersion);
   const primaryLine = preferCommitInfo
-    ? commitLine || buildLine || versionLabel || ''
+    ? commitLine || buildLine || versionLabel || ""
     : isSourceBuild
-      ? commitLine || versionLabel || ''
+      ? commitLine || versionLabel || ""
       : isPublishedNpm && versionLabel
         ? `${versionLabel} (npm)`
-        : buildLine || versionLabel || '';
+        : buildLine || versionLabel || "";
   const secondaryLine = preferCommitInfo
-    ? (versionLabel ?? '')
+    ? (versionLabel ?? "")
     : isSourceBuild
-      ? (versionLabel ?? commitMessage ?? '')
-      : (commitMessage ?? '');
+      ? (versionLabel ?? commitMessage ?? "")
+      : (commitMessage ?? "");
   const hasBuildInfo = Boolean(primaryLine || secondaryLine);
 
   const { mutate: logout } = useMutation(
@@ -221,7 +221,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             )}
             {secondaryLine && (
               <div
-                className={preferCommitInfo ? 'opacity-70' : 'truncate'}
+                className={preferCommitInfo ? "opacity-70" : "truncate"}
                 title={!preferCommitInfo ? commitMessage : undefined}
               >
                 {secondaryLine}
@@ -242,19 +242,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <Link
                         to={item.url}
                         activeProps={{
-                          'data-active': true,
+                          "data-active": true,
                         }}
                         activeOptions={{ exact: true }}
                       >
                         {item.icon}
                         <span>{item.title}</span>
-                        {item.title === 'Health' && healthStatus && (
+                        {item.title === "Health" && healthStatus && (
                           <span
                             className={cn(
-                              'ml-auto size-2 rounded-full',
-                              healthStatus === 'error'
-                                ? 'bg-destructive'
-                                : 'bg-amber-500',
+                              "ml-auto size-2 rounded-full",
+                              healthStatus === "error"
+                                ? "bg-destructive"
+                                : "bg-amber-500",
                             )}
                             aria-label={`Health has ${healthStatus}s`}
                           />

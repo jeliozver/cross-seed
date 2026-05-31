@@ -3,17 +3,17 @@ import {
   httpBatchLink,
   httpSubscriptionLink,
   splitLink,
-} from '@trpc/client';
-import { createTRPCContext } from '@trpc/tanstack-react-query';
-import type { AppRouter } from '@cross-seed/api-types';
+} from "@trpc/client";
+import { createTRPCContext } from "@trpc/tanstack-react-query";
+import type { AppRouter } from "@cross-seed/api-types";
 
-const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 // Create a tRPC client (for usage outside of React)
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     splitLink({
-      condition: (op) => op.type === 'subscription',
+      condition: (op) => op.type === "subscription",
       true: httpSubscriptionLink({
         url: `${baseUrl}/api/trpc`,
       }),

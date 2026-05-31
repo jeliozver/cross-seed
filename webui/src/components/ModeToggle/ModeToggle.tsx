@@ -1,13 +1,13 @@
-import { Moon, Sun } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Moon, Sun } from "lucide-react";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import { useTheme } from '../../contexts/Theme/ThemeContext';
-import { FC } from 'react';
+} from "../ui/dropdown-menu";
+import { useTheme } from "../../contexts/Theme/ThemeContext";
+import { FC } from "react";
 
 type ModeToggleProps = {
   className?: string;
@@ -26,13 +26,13 @@ export const ModeToggle: FC<ModeToggleProps> = ({ className }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => setTheme('light')}>
+        <DropdownMenuItem onClick={() => setTheme("light")}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 type StringKeyRecord = Record<string, unknown>;
 type SchemaKeys<T extends z.ZodRawShape> = keyof T & string;
@@ -36,7 +36,7 @@ export function pickSchemaFields<
         result[key] = value;
       }
       // Handle nested objects
-      else if (value && typeof value === 'object' && !Array.isArray(value)) {
+      else if (value && typeof value === "object" && !Array.isArray(value)) {
         const schemaField = schema.shape[key];
         if (schemaField instanceof z.ZodObject) {
           result[key] = pickSchemaFields(
