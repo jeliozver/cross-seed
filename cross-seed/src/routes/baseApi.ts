@@ -24,7 +24,7 @@ import { indexTorrentsAndDataDirs } from "../torrent.js";
 import { errorMessage, formatAsList, sanitizeInfoHash } from "../utils.js";
 import { authorize } from "../utils/authUtils.js";
 
-const ANNOUNCE_SCHEMA = z
+export const ANNOUNCE_SCHEMA = z
 	.object({
 		name: z
 			.string()
@@ -42,7 +42,6 @@ const ANNOUNCE_SCHEMA = z
 			.transform((cookie) => cookie?.trim() || undefined),
 	})
 	.strict()
-	.required()
 	.refine((data) => data.guid === data.link);
 
 const WEBHOOK_SCHEMA = z
