@@ -423,7 +423,7 @@ us on Discord with logs.
 The best way to start troubleshooting this is to check the `logs/verbose.*.log`
 and find this specific event.
 
-For some torrent clients, this error can occur if there are no torrents loaded. 
+For some torrent clients, this error can occur if there are no torrents loaded.
 Try adding at least one torrent file to the client, and then retry injecting.
 
 You will be able to see the circumstances around the failure and start

@@ -52,3 +52,5 @@ coverage/
 .claude/worktrees/
 webui/src/routeTree.gen.ts
 .npm-cache/
+cross-seed.org/build/
+cross-seed.org/.docusaurus/

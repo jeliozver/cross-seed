@@ -39,4 +39,4 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - id: deployment
-              uses: actions/deploy-pages@854ac8b7d7ed5ab55a88c6c6f8a89ff32f5e0d23
+              uses: actions/deploy-pages@v4

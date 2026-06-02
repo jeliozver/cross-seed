@@ -25,5 +25,8 @@ jobs:
                   node-version: 26
                   cache: npm
             - run: npm ci
+            - run:
+                  npm -w cross-seed.org exec prettier --check . --ignore-path
+                  .gitignore
             - run: npm -w cross-seed.org run lint
             - run: npm -w cross-seed.org run build
