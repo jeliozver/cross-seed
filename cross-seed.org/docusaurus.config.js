@@ -38,7 +38,7 @@ const config = {
 					sidebarPath: require.resolve("./sidebars.js"),
 					sidebarCollapsed: false,
 					editUrl:
-						"https://github.com/cross-seed/cross-seed.org/edit/master/",
+						"https://github.com/cross-seed/cross-seed/edit/master/cross-seed.org/",
 				},
 				theme: {
 					customCss: require.resolve("./src/css/custom.css"),

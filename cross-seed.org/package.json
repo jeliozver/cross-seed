@@ -6,6 +6,7 @@
 		"docusaurus": "docusaurus",
 		"start": "docusaurus start",
 		"build": "docusaurus build",
+		"lint": "eslint .",
 		"swizzle": "docusaurus swizzle",
 		"deploy": "docusaurus deploy",
 		"clear": "docusaurus clear",
@@ -26,6 +27,7 @@
 	},
 	"devDependencies": {
 		"@docusaurus/module-type-aliases": "^3.10.1",
+		"eslint-plugin-react": "^7.37.5",
 		"prettier": "^3.3.3"
 	},
 	"browserslist": {

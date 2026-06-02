@@ -8,12 +8,14 @@
 		"cross-seed",
 		"shared",
 		"webui",
-		"api-types"
+		"api-types",
+		"cross-seed.org"
 	],
 	"scripts": {
 		"test": "npm --workspaces run test --if-present",
 		"coverage": "npm --workspaces run coverage --if-present",
 		"build": "npm -w cross-seed run build:all",
+		"build:docs": "npm -w cross-seed.org run build",
 		"build:sea": "npm run build && node scripts/build-sea.js",
 		"build:api-types": "npm -w api-types run build",
 		"build:types": "tsc -b cross-seed/tsconfig.build.json api-types/tsconfig.build.json --force",

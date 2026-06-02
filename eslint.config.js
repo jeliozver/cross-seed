@@ -14,6 +14,7 @@ export default tseslint.config(
 			"shared/**",
 			"webui/**",
 			"api-types/**",
+			"cross-seed.org/**",
 			"sea/**",
 		],
 	},

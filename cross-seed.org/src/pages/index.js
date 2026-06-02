@@ -1,5 +1,4 @@
 import Mermaid from "@theme/Mermaid";
-import React from "react";
 import clsx from "clsx";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
@@ -56,9 +55,9 @@ function IntroducingCrossSeed() {
 						The result is stronger swarms and healthier trackers.
 					</strong>{" "}
 					More seeds means faster downloads, longer retention, and
-					better availability for trackers — while you build ratio
-					and seed size without babysitting your client or
-					duplicating data.
+					better availability for trackers — while you build ratio and
+					seed size without babysitting your client or duplicating
+					data.
 				</p>
 			</div>
 		</section>
